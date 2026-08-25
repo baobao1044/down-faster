@@ -1,0 +1,17 @@
+{
+  "minimum_chrome_version": "116",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "downloads",
+    "storage",
+    "unlimitedStorage",
+    "contextMenus",
+    "notifications",
+    "alarms",
+    "declarativeNetRequestWithHostAccess",
+    "offscreen"
+  ]
+}

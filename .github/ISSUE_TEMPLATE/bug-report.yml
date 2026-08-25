@@ -1,0 +1,252 @@
+# Mẫu báo lỗi dạng form (GitHub issue form schema).
+#
+# Ghi chú schema: `required: true` đặt trên TỪNG ô checkbox chỉ có hiệu lực
+# với repo public. Repo này sẽ là public nên dùng được; nếu chuyển sang
+# private thì ô xác nhận đọc Limitations chỉ còn là gợi ý.
+#
+# Link dùng dạng /blob/HEAD/ để khỏi phụ thuộc tên nhánh mặc định, vì nhánh
+# đó chưa được chốt trên GitHub lúc viết file này.
+
+name: Bug report
+description: Something went wrong during a download, or the extension did nothing at all.
+labels: ["bug"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. Worth knowing before you write anything:
+        **this extension has never been run in a real browser** — the development
+        machine has no browser installed. So "nothing happened", "the popup was
+        blank", or "it downloaded nothing" are genuinely useful reports here, not
+        low-effort ones. There is a fair chance you are the first person to load it.
+
+        Two routing notes:
+
+        - **Security problems do not go here.** Report those privately through
+          [Security Advisories](https://github.com/baobao1044/down-faster/security/advisories/new);
+          see [SECURITY.md](https://github.com/baobao1044/down-faster/blob/HEAD/SECURITY.md).
+        - **Bạn viết tiếng Việt cũng được**, không cần dịch sang tiếng Anh.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before filing
+      options:
+        - label: >-
+            I have read the
+            [Limitations](https://github.com/baobao1044/down-faster#limitations)
+            section of the README, and what I am reporting is not one of the limits
+            described there (speed gains only when the server throttles per
+            connection, HLS audio landing in a separate file, DASH not downloaded,
+            no BitTorrent).
+          required: true
+        - label: >-
+            I searched the open and closed issues, and this does not look like a
+            duplicate.
+        - label: >-
+            This is not a security vulnerability — those go to
+            [Security Advisories](https://github.com/baobao1044/down-faster/security/advisories/new).
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: >-
+        What you saw, in your own words. If the extension handed the download back to
+        the browser instead of accelerating it, say so — that is deliberate in some
+        cases and a bug in others. A build made with `npm run build:dev` prints the
+        reason as `[df:job] trả lại cho trình duyệt: <lý do>`; a default
+        `npm run build` compiles that line away, so rebuild with `build:dev` if you can.
+      placeholder: >-
+        The download started, the manager showed 8 connections, then it stopped at 40%
+        and the file never appeared in ~/Downloads.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: |
+        Numbered steps, from a freshly loaded extension if you can.
+
+        The most reproducible bug report uses the bundled test server, which needs no
+        internet and generates its bytes from `byte[i] = i % 251` so any result can be
+        checked exactly:
+
+        ```bash
+        npm run testserver     # http://localhost:8787
+        ```
+
+        Routes: `/file/<bytes>`, `/slow/<bytes>?kbps=200`, `/norange/<bytes>`,
+        `/gzip/<bytes>`, `/named/<bytes>`, `/flaky/<bytes>?drop=1048576`, `/stats`.
+      placeholder: |
+        1. npm run build:dev, load dist/chromium via chrome://extensions
+        2. Start the test server: npm run testserver
+        3. Open http://localhost:8787/slow/104857600?kbps=200
+        4. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+      description: >-
+        One or two sentences. If you expected a particular speed-up, say what you based
+        that on — the README's measured numbers only hold when the server throttles each
+        connection separately.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chromium-based (Chrome, Edge, Brave, Opera, Vivaldi, Chromium)
+        - Firefox
+        - Firefox-based (LibreWolf, Waterfox, Zen, Floorp)
+        - Other, or not sure
+    validations:
+      required: true
+
+  - type: input
+    id: browser-version
+    attributes:
+      label: Browser name and exact version
+      description: >-
+        From `chrome://version` or `about:support`. The manifests declare Chrome 116 and
+        Firefox 128 as the minimum, so anything older is expected to fail.
+      placeholder: e.g. Chrome 128.0.6613.120, or Firefox 131.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: build
+    attributes:
+      label: Which build did you load
+      description: >-
+        The two targets differ in where the engine lives — an offscreen document on
+        Chromium, the event page on Firefox — so this changes which code path you hit.
+        A `npm run build:dev` build of either target still counts as `dist/chromium`
+        or `dist/firefox` — pick the target, not *modified*.
+      options:
+        - dist/chromium
+        - dist/firefox
+        - A modified or self-patched build
+        - Not sure
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      description: >-
+        Useful for anything involving disk writes, OPFS, or the final save step.
+      placeholder: e.g. Ubuntu 24.04, Windows 11, macOS 15.1
+
+  - type: input
+    id: version
+    attributes:
+      label: Extension version or commit
+      description: >-
+        The manifest version is generated from `package.json`, so it will say 0.1.0 for
+        everyone. The commit hash (`git rev-parse --short HEAD`) is what actually
+        identifies your build.
+      placeholder: e.g. 0.1.0 (a1b2c3d)
+
+  - type: textarea
+    id: url
+    attributes:
+      label: The URL being downloaded
+      description: |
+        **Redact before you paste.** A download link very often carries a signed token,
+        a session id, or an account identifier in the query string, and an issue in a
+        public repository is world-readable and permanently indexed. Replace anything
+        that looks like a secret with `REDACTED`.
+
+        The *shape* of the URL is usually enough to reproduce a bug —
+        `https://cdn.example.com/file.zip?token=REDACTED&expires=REDACTED` tells the
+        maintainer as much as the real one. A local test-server URL needs no redaction
+        at all.
+      placeholder: https://cdn.example.com/big.zip?token=REDACTED
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console output
+      description: |
+        On Chromium the engine does **not** run in the service worker, so there are two
+        consoles and they carry different lines. Please check both:
+
+        - **Chromium, engine** — `chrome://extensions` → *Details* → *Inspect views* →
+          `offscreen.html`. Probe, piece, retry and hand-back-reason lines are here.
+          If `offscreen.html` is not listed at all, say so — that is worth reporting.
+        - **Chromium, background** — the same *Inspect views* list, entry
+          `service worker`. Interception, alarms and the
+          `đã trả lại cho trình duyệt: <url>` line are here.
+        - **Firefox** — `about:debugging#/runtime/this-firefox` → *Inspect*. Firefox
+          uses an event page, so engine and background share one console.
+
+        Every line the extension prints is prefixed `[df:<scope>]`, for example
+        `[df:job]` or `[df:background]`. **A near-empty console is the expected result
+        of a default build, not proof that nothing ran.** `npm run build` sets
+        `__DEV__=false`, and esbuild then removes every `console.log` call. What is
+        left is exactly one `console.warn` per bundle — the i18n fallback — and
+        `fetch-worker.js`, `writer-worker.js` and `media-detect.js` have none at all.
+        Do not sit waiting for a warning about a retried piece or a rejected header
+        rule: those lines go through `log()` and are gone from a default build. There
+        is no `console.error` anywhere either — `error()` is exported at
+        `src/shared/log.ts:15` and nothing in `src/` calls it — so there are no red
+        error lines to go looking for.
+
+        To get the chatty lines, the hand-back reason included, rebuild and reload:
+
+        ```bash
+        npm run build:dev      # = node scripts/build.mjs --dev
+        ```
+
+        `npm run watch` implies `--dev` as well, so a watch build already prints them.
+        If a `build:dev` build is impractical for you, file the report anyway and say
+        which build you used — a report with no console lines is still a usable report.
+
+        Redact the URL here too: log lines print it verbatim, for example
+        `[df:job] tải một luồng: <url>`. Header values are not logged — the two header
+        lines carry a header name and a failure reason, never a `Cookie` or `Referer`
+        value.
+      render: text
+
+  - type: dropdown
+    id: verify
+    attributes:
+      label: Did npm run verify accept the file?
+      description: >-
+        Only meaningful for files fetched from the bundled test server, whose bytes
+        follow a known pattern. Run `npm run verify <path-to-file>` on whatever landed
+        on disk — a piece written at the wrong offset shows up immediately.
+      options:
+        - Yes, it reported the file byte-exact
+        - No, it reported a mismatch
+        - No file was produced at all
+        - Not applicable, or I did not run it
+
+  - type: input
+    id: checklist-item
+    attributes:
+      label: Which manual checklist item, if any
+      description: >-
+        The README carries a 21-item manual verification checklist that nobody has run
+        yet. If your report came out of one of those items, its number is the fastest
+        possible context.
+      placeholder: e.g. item 5 (/flaky retry), or "not from the checklist"
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: >-
+        Screenshots, a `chrome://extensions` error banner, your connection settings
+        (connections, speed limit, auto mode), or a guess at the cause. Optional.

@@ -1,0 +1,167 @@
+name: CI
+
+# Trạng thái kiểm chứng của chính file này, nói trước để khỏi hiểu nhầm: mọi bước bên
+# dưới đã được chạy tay trên máy phát triển và các đoạn shell đã được thử trong những
+# tiến trình riêng biệt, đúng cách GitHub Actions thực thi từng step. Nhưng workflow
+# CHƯA từng chạy một lần nào trên GitHub Actions — lúc viết file, repo chưa có commit
+# nào và chưa có remote. Toàn bộ kiểm chứng tay đều thực hiện trên Node 22; nhánh Node
+# 20 của ma trận chưa được thử ở đâu cả. `npm ci` cũng chưa chạy: lockfile đã được đối
+# chiếu với package.json và có sẵn @esbuild/linux-x64, nhưng đó là suy luận, không phải
+# một lần cài sạch quan sát được.
+
+# Nhánh mặc định của repo chưa được tạo trên GitHub lúc viết file này, nên cả hai
+# tên thông dụng đều được liệt kê. Sau khi repo lên, có thể xoá tên còn thừa.
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+# Đẩy liên tiếp lên cùng một nhánh thì chỉ giữ lần chạy mới nhất.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Kiểm tra (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      # Một phiên bản Node hỏng không được che mất kết quả của phiên bản kia.
+      fail-fast: false
+      matrix:
+        node: ['20', '22']
+
+    steps:
+      - name: Lấy mã nguồn
+        uses: actions/checkout@v4
+
+      - name: Cài Node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          # Cần package-lock.json, và repo có sẵn (lockfileVersion 3).
+          cache: npm
+
+      - name: Cài phụ thuộc
+        run: npm ci
+
+      # npm run typecheck chạy tsc hai lần: tsconfig.json cho phần chính và
+      # tsconfig.worker.json cho hai worker. Lưu ý phạm vi: cả hai tsconfig chỉ
+      # include src/**, nên test/ và bench/ KHÔNG được kiểm kiểu ở bước này —
+      # esbuild trong scripts/test.mjs chỉ xoá kiểu chứ không kiểm kiểu.
+      - name: Kiểm kiểu
+        run: npm run typecheck
+
+      # scripts/test.mjs bundle test/*.test.ts sang ESM rồi chạy bằng node:test.
+      # Lúc viết file này là 397 test, và cả 397 đều do tác giả chạy tay trên máy phát
+      # triển với Node 22 — workflow này thì chưa chạy lần nào, xem ghi chú đầu file.
+      - name: Chạy test
+        run: npm test
+
+      # Bản dev không phải bản dựng thừa: bản mặc định đặt __DEV__=false nên esbuild
+      # cắt sạch console.log và minify, còn --dev giữ log lại kèm sourcemap inline —
+      # ai muốn đọc log trong Console thì phải cài bản này. Bước ở đây chỉ kiểm rằng
+      # nhánh --dev còn dựng được.
+      #
+      # Đặt TRƯỚC bản phát hành là cố ý: scripts/build.mjs xoá sạch thư mục đích trước
+      # mỗi lần dựng, nên theo thứ tự này thì dist/ kết thúc ở bản phát hành, kể cả khi
+      # sau này có thêm bước tải artifact lên.
+      - name: Build bản dev (cả hai target)
+        run: npm run build:dev
+
+      # scripts/build.mjs dựng cả hai target: dist/chromium và dist/firefox.
+      - name: Build bản phát hành (cả hai target)
+        run: npm run build
+
+  bench:
+    name: Đo tốc độ (không gác cổng)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # continue-on-error: job này KHÔNG BAO GIỜ được làm đỏ CI.
+    #
+    # Lý do: bench đo thời gian tường, mà thời gian đó gần như toàn bộ đến từ các nhịp
+    # ngủ trong scripts/testserver.mjs — sendPattern ngủ sau mỗi chunk 64 KiB theo đúng
+    # tốc độ được yêu cầu. Độ chính xác của giấc ngủ đó và của bộ lập lịch thay đổi theo
+    # tải máy, nên số giây ở đây nói về cái máy ảo đang chạy chứ không nói về mã nguồn.
+    # Trên máy phát triển, sáu lần chạy cùng một cấu hình chỉ lệch nhau khoảng 1% thời
+    # gian thô và tỉ lệ tăng tốc thì không đổi — nhưng đó là một máy rảnh, chạy một
+    # mình. Runner dùng chung của GitHub Actions không hứa gì tương đương, và lấy thời
+    # gian tường đo ở đó làm ngưỡng gác hiệu năng thì chỉ sinh ra báo động giả. Mọi số
+    # tốc độ công bố trong README đều đo trên máy phát triển, không lấy từ đây.
+    #
+    # Vậy job này để làm gì: bắt lỗi VỠ MÃ. bench/bench.ts import thẳng các hàm thật
+    # của engine (planPieces, remainingRange, takeNextPending, ConcurrencyController,
+    # paceOptionsFor) chứ không chép lại tham số, nên nếu một trong các hàm đó đổi
+    # chữ ký hay đổi hành vi tới mức treo/ném lỗi thì bench sẽ gãy và log của job này
+    # cho thấy điều đó. Bench cũng tự kiểm từng byte theo công thức byte[i] = i % 251,
+    # nên một piece ghi lệch offset sẽ in ra "SAI <n> byte" trong log. Nói rõ giới hạn:
+    # dòng đó KHÔNG làm bench trả mã thoát khác 0, và job này lại continue-on-error —
+    # muốn biết thì phải mở log ra đọc, không có gì tự chuyển đỏ.
+    continue-on-error: true
+
+    steps:
+      - name: Lấy mã nguồn
+        uses: actions/checkout@v4
+
+      - name: Cài Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Cài phụ thuộc
+        run: npm ci
+
+      # scripts/testserver.mjs mặc định nghe cổng 8787, và bench/bench.ts cũng lấy
+      # http://localhost:8787 làm base mặc định, nên hai bên khớp sẵn — không cần
+      # truyền tham số cổng cho bên nào.
+      #
+      # Gọi thẳng node thay vì `npm run testserver` (hai lệnh chạy đúng một thứ) để
+      # $! là PID của chính server. Nếu bọc qua npm thì $! là PID của npm, và bước
+      # tắt bên dưới sẽ bắn tín hiệu vào tiến trình cha chứ không chắc trúng server.
+      - name: Bật server test ở nền
+        run: |
+          node scripts/testserver.mjs > testserver.log 2>&1 &
+          echo $! > testserver.pid
+
+      # /stats trả JSON ngay lập tức mà không sinh byte dữ liệu nào, nên nó là tín
+      # hiệu "đã lên" rẻ nhất. Chờ tối đa 30 giây rồi mới bỏ cuộc.
+      - name: Chờ server test lên
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:8787/stats > /dev/null 2>&1; then
+              echo "Server test đã lên (thử lần ${i})"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Server test không lên sau 30 giây. Log:"
+          cat testserver.log || true
+          exit 1
+
+      # Bench tải 4 MiB và 32 MiB (bench/bench.ts dùng 4 * 1024 * 1024 và
+      # 32 * 1024 * 1024), mỗi kích thước ba lượt (1 kết nối, trần cứng 8, bộ dò
+      # AIMD). Server bóp tốc độ riêng từng kết nối bằng cách ngủ sau mỗi chunk
+      # 64 KiB, nên tổng thời gian phần lớn do các nhịp ngủ đó quyết định.
+      - name: Chạy bench
+        run: npm run bench
+
+      # Chỉ bắn theo PID đã ghi. Cố tình KHÔNG dùng `pkill -f testserver.mjs`: pkill -f
+      # so khớp trên toàn bộ dòng lệnh, mà chuỗi mẫu lại nằm ngay trong chính đoạn
+      # script này, nên ở một số cách chạy nó tự bắn vào mình và bước tắt chết oan.
+      - name: Tắt server test
+        if: always()
+        run: |
+          if [ -f testserver.pid ]; then
+            kill "$(cat testserver.pid)" 2>/dev/null || true
+          fi
+
+      - name: In log server test
+        if: always()
+        run: cat testserver.log || true

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>Down Faster</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="popup">
+  <div class="switch-row">
+    <div class="label">
+      <div class="title" data-i18n="popup_auto_title">Tự động tăng tốc</div>
+      <div class="hint" id="autoHint">Đang bật</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="auto" data-i18n-aria-label="popup_auto_title">
+      <span class="track"></span>
+      <span class="thumb"></span>
+    </label>
+  </div>
+
+  <section id="mediaBox" hidden>
+    <h2 class="section-title" data-i18n="popup_media_heading">Video trên trang này</h2>
+    <div id="media"></div>
+  </section>
+
+  <div id="list" style="margin-top:10px"></div>
+
+  <div class="row" style="margin-top:10px">
+    <input type="url" id="url" spellcheck="false"
+           data-i18n-placeholder="popup_url_placeholder"
+           data-i18n-aria-label="popup_url_label">
+    <button id="add" data-i18n="common_download">Tải</button>
+  </div>
+
+  <button class="link" id="open" style="margin-top:6px" data-i18n="popup_open_manager">Xem tất cả</button>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

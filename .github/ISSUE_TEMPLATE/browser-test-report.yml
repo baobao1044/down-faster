@@ -1,0 +1,266 @@
+name: Browser test report
+description: >-
+  You ran Down Faster in a real browser. Tell us what happened — a pass is worth as
+  much as a failure, and this is the report the project needs most.
+title: "[Browser test] "
+
+# Nhãn "browser-test" phải được tạo trong repo thì dòng dưới mới có tác dụng, và repo
+# này chưa có nhãn đó. Chưa kiểm chứng được GitHub xử lý thế nào khi nhãn chưa tồn tại.
+labels: ["browser-test"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thank you — genuinely.** You are about to do the one thing this project cannot
+        do for itself.
+
+        Down Faster has 397 passing unit tests, a clean typecheck, and a benchmark that
+        runs the real piece planner. It has also never been loaded into a browser, not
+        once. OPFS and `createSyncAccessHandle`, the two Web Workers, the Chromium
+        offscreen document, `chrome.alarms`, `declarativeNetRequest`,
+        `chrome.downloads`, the content script — all of it is correct on paper and
+        observed nowhere. Your report converts one of those paper claims into a fact.
+
+        The tests do not cover the gap either. About 34% of `src/` has no test at all,
+        including the 815-line class that drives a download from beginning to end
+        (`DownloadJob`, `src/engine/orchestrator.ts` lines 153–967). The pieces are
+        tested well; the code that assembles them into a download is neither tested nor
+        observed.
+
+        Two things before you start:
+
+        - **"It did not work at all" is an excellent report.** So is *"item 5 passed."*
+          Both replace a guess with evidence, which is exactly what is missing.
+        - **You do not have to fill in everything.** Browser, OS, and what happened are
+          enough. The rest only makes the report faster to act on.
+
+        Tiếng Việt hoàn toàn được — cứ viết tiếng Việt nếu tiện hơn. Bản tài liệu tiếng
+        Việt nằm ở `README.vi.md`.
+
+  - type: dropdown
+    id: target
+    attributes:
+      label: Which build did you load?
+      description: >-
+        The extension is not on any store, so this will be a folder you built yourself.
+        If you can, build it with `npm run build:dev` rather than `npm run build` — the
+        default build strips the logging out, and the console field below explains why
+        that matters.
+      options:
+        - "dist/chromium — loaded unpacked from chrome://extensions"
+        - "dist/firefox — loaded temporarily from about:debugging"
+        - "Both"
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      description: >-
+        The manifest asks for Chromium 116 or newer (`minimum_chrome_version`) and
+        Firefox 128 or newer (`strict_min_version`). If you are below either line, say
+        so anyway — that is a useful data point, not a disqualification.
+      placeholder: "Chrome 131.0.6778.86 · Edge 131 · Firefox 133.0.3 · Brave 1.73"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: "Ubuntu 24.04 · Windows 11 23H2 · macOS 15.1 (Apple silicon)"
+    validations:
+      required: true
+
+  - type: input
+    id: commit
+    attributes:
+      label: Commit you built from
+      description: >-
+        `git rev-parse --short HEAD`. Every build currently stamps version `0.1.0`, so
+        the commit is the only thing that identifies which code you were running.
+      placeholder: "a1b2c3d"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: outcome
+    attributes:
+      label: How did it go, in one line?
+      description: Pick the closest match; the details go in the next field.
+      options:
+        - "It worked — the download finished and the file was correct"
+        - "It worked, but something was off (wrong speed, wrong connection count, UI)"
+        - "The download failed, but the browser got the file instead (hand-back worked)"
+        - "The download failed and the file was lost, truncated, or corrupted"
+        - "The extension loaded but never did anything"
+        - "The extension would not load or install at all"
+        - "Something else — described below"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: checklist
+    attributes:
+      label: Which manual checklist items did you try?
+      description: >-
+        The 21 checks live in the README under *Manual verification checklist*. Select
+        every item you actually ran — passes count as much as failures. Leave this empty
+        if you were just using the extension normally; that is a valid report too.
+      multiple: true
+      options:
+        - "Did not get that far — the extension never loaded or started"
+        - "1 — /slow/104857600?kbps=200: manager shows 8 connections, /stats agrees"
+        - "2 — /norange/10485760: drops to 1 connection and still completes"
+        - "3 — /gzip/10485760: splitting disabled, file not corrupted (under 2 MiB it is the size gate that passes, not the gzip path)"
+        - "4 — /named/1048576: saved filename is báo cáo thử.bin"
+        - "5 — /flaky/10485760?drop=1048576: retries and still produces a correct file"
+        - "6 — Pause mid-download, then resume: verify still reports byte-exact"
+        - "7 — Cancel mid-download: temporary file removed from OPFS"
+        - "8 — Every completed file passes npm run verify"
+        - "9 — Small file (/file/1048576): extension leaves it to the browser"
+        - "10 — /norange/104857600: handed back to the browser, not pulled single-threaded"
+        - "11 — Kill the server mid-download: browser re-downloads, no truncated failure"
+        - "12 — After each hand-back, no re-interception loop"
+        - "13 — Queue: 2 at a time, 5 links, exactly 2 run; Move to front reorders"
+        - "14 — Speed limit: 500 KB/s is the total across all connections, not per one"
+        - "15 — Schedule: stops at the window edge and resumes when the window reopens"
+        - "16 — Recovery: kill the browser mid-download, reopen, it resumes and verifies"
+        - "17 — Unknown size: single-threaded and resumes on disconnect"
+        - "18 — Multiple sources: same file accepted, a different file rejected"
+        - "19 — Video: HLS page listed in the popup, assembled file plays"
+        - "20 — Keyboard and screen reader: arrow keys, Tab reach, milestone announcements"
+        - "21 — Language: switch the browser to English and the UI follows"
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        Two of those checks are known to be untestable with the tooling in this repo, and
+        that is the repo's fault, not yours:
+
+        - **Item 14** — `/stats` returns `{active, peak, totalRequests}` only. It counts
+          connections and knows nothing about bytes, so it cannot confirm a speed limit.
+          Timing a known-size download is the workaround.
+        - **Item 17** — `scripts/testserver.mjs` sets `content-length` on every route and
+          has no chunked endpoint, so an unknown-size download needs a real-world URL.
+
+        If you found a third check that cannot be run as written, say so below. A
+        documentation bug reported here is a real result, not a consolation prize.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: >-
+        What you expected, what you got, and the steps in between. If a checklist item
+        failed, name it and say where it stopped. Screenshots of the manager page are
+        welcome — drag them straight into this box.
+      placeholder: |
+        Loaded dist/chromium, started `npm run testserver`, pasted
+        http://localhost:8787/slow/104857600?kbps=200 into the manager.
+
+        Expected: 8 connections, roughly 1600 KB/s total.
+        Got: the manager showed 8 connections and /stats agreed, but the progress bar
+        froze at 12% for about 40 seconds before finishing. Final file passed verify.
+    validations:
+      required: true
+
+  - type: input
+    id: settings
+    attributes:
+      label: Settings in effect
+      description: >-
+        Defaults are auto mode on, 8 connections, adaptive connections on, no speed
+        limit, no schedule. Mention anything you changed.
+      placeholder: "defaults, except speed limit 500 KB/s and 2 downloads at a time"
+    validations:
+      required: false
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Console output from where the engine actually runs
+      description: |
+        This is the field that usually decides whether a report can be acted on.
+
+        **Chromium** — `chrome://extensions` → Developer mode → *Details* → *Inspect
+        views* → **`offscreen.html`**. The engine lives there, **not** in the service
+        worker: MV3 service workers have no DOM, cannot spawn a Worker, and cannot make
+        a blob URL, so `background.js` only brokers `downloads`, `storage`,
+        `notifications`, `alarms`, `action`, and `declarativeNetRequest` on the
+        engine's behalf. Its console is still worth a glance for `[df:background]`
+        lines, but the download itself logs in the offscreen document.
+
+        **Firefox** — `about:debugging#/runtime/this-firefox` → *Inspect* on Down Faster.
+        There is no offscreen document here; the engine runs directly in the event page
+        that button opens.
+
+        **Build with `npm run build:dev` first — otherwise there is almost nothing to
+        paste.** The default `npm run build` sets `__DEV__` to false, and esbuild then
+        strips every `log()` call out of the bundle. We checked what is left: at most
+        one `console.warn` per bundle — the two workers and the content script have
+        none — no `console.log`, and no `console.error` at all
+        — the `error()` helper is exported from `src/shared/log.ts` but nothing in
+        `src/` ever calls it. Uncaught exceptions still show up, because the browser
+        prints those itself, but a release build says nothing about its own state.
+        `npm run build:dev` (or `npm run watch`, which also builds in dev mode) keeps
+        the full `[df:…]` logging, leaves the code unminified, and gives readable stack
+        traces — reproduce on that build, then paste what you get. If the UI itself
+        misbehaved, right-click the manager page → *Inspect* for its own console.
+
+        The log messages themselves are written in Vietnamese — paste them as they are,
+        please do not translate them. The scope in the prefix says where a line came
+        from — the complete set is `job`, `fetcher`, `writer`, `stream`, `queue`, `hls`,
+        `recovery`, `persistence`, `headers`, `pace`, `manager`, `background`, `dom`,
+        `i18n`.
+      render: text
+      placeholder: |
+        [df:job] 8 kết nối cho 32 piece
+        [df:job] piece 5 thử lại (1): network error
+        [df:job] engine hỏng, trả lại cho trình duyệt: ...
+        Uncaught (in promise) DOMException: ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: verify
+    attributes:
+      label: Output of `npm run verify <file>`, if a file was produced
+      description: >-
+        This only means something for files from the bundled test server, which
+        generates `byte[i] = i % 251`; the script checks every byte against that pattern
+        and prints either `DUNG TOAN BO` or the first few wrong offsets with the value it
+        got. For a file from the real internet, compare a hash against the source and
+        paste that instead.
+      render: text
+      placeholder: |
+        File:     /home/you/Downloads/slow.bin
+        Kich thuoc: 104.857.600 byte
+        Ket qua:  SAI 1.048.576 byte
+          offset 33554432: nhan 0, can 137
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: followup
+    attributes:
+      label: Follow-up
+      description: Entirely optional — it just helps to know what is possible.
+      options:
+        - label: I can re-run this with `npm run build:dev` if you need fuller logs
+          required: false
+        - label: I can try the same steps on the other browser
+          required: false
+        - label: I am willing to test a patch
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        That is everything. Thank you for spending your time and your bandwidth on
+        someone else's project — this report is the difference between a design that
+        compiles and software that is known to work.

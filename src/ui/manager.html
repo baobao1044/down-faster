@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Down Faster</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page">
+    <h1 data-i18n="manager_heading">Down Faster</h1>
+
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tabDownloads" aria-controls="paneDownloads" aria-selected="true"
+              data-i18n="manager_tab_downloads">Lượt tải</button>
+      <button role="tab" id="tabSettings" aria-controls="paneSettings" aria-selected="false"
+              data-i18n="manager_tab_settings">Cài đặt</button>
+    </div>
+
+    <section id="paneDownloads" role="tabpanel" aria-labelledby="tabDownloads">
+      <div class="switch-row" style="margin-bottom:14px">
+        <div class="label">
+          <div class="title" data-i18n="manager_auto_title">Tự động tăng tốc</div>
+          <div class="hint" id="autoHint">Đang bật</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="auto" data-i18n-aria-label="manager_auto_title">
+          <span class="track"></span>
+          <span class="thumb"></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <textarea id="url" rows="1" spellcheck="false"
+                  data-i18n-placeholder="manager_url_placeholder"
+                  data-i18n-aria-label="manager_url_label"></textarea>
+        <button class="primary" id="add" data-i18n="common_download">Tải</button>
+      </div>
+      <p class="hint" data-i18n="manager_add_hint"></p>
+
+      <div class="row" style="justify-content:flex-end">
+        <button class="link" id="clear" data-i18n="manager_clear_finished">Dọn mục đã xong</button>
+      </div>
+
+      <div id="list" role="list" data-i18n-aria-label="a11y_list_label"></div>
+      <p class="hint" data-i18n="a11y_list_hint"></p>
+    </section>
+
+    <section id="paneSettings" role="tabpanel" aria-labelledby="tabSettings" hidden>
+      <div id="settings"></div>
+    </section>
+  </div>
+  <script type="module" src="manager.js"></script>
+</body>
+</html>

@@ -1,0 +1,566 @@
+{
+  "locale_bcp47": {
+    "message": "vi",
+    "description": "Mã locale BCP 47 của chính bản dịch này. Intl.NumberFormat lấy từ đây chứ không lấy ngôn ngữ giao diện trình duyệt, vì trình duyệt có thể là fr-FR trong khi chuỗi thực tế rơi về vi."
+  },
+  "ext_name": {
+    "message": "Down Faster",
+    "description": "Tên extension, hiện trong manifest và trong danh sách extension của trình duyệt."
+  },
+  "ext_description": {
+    "message": "Tăng tốc tải file bằng nhiều kết nối song song, ngay trong trình duyệt.",
+    "description": "Mô tả ngắn trong manifest và trên cửa hàng extension."
+  },
+  "action_title": {
+    "message": "Down Faster",
+    "description": "Chú thích hiện khi rê chuột lên biểu tượng trên thanh công cụ."
+  },
+  "common_download": {
+    "message": "Tải",
+    "description": "Nhãn nút gửi liên kết đi tải, ở cả popup lẫn trang quản lý."
+  },
+  "common_pause": {
+    "message": "Tạm dừng",
+    "description": "Nhãn nút tạm dừng một lượt tải."
+  },
+  "common_resume": {
+    "message": "Tiếp tục",
+    "description": "Nhãn nút chạy tiếp một lượt tải đang tạm dừng."
+  },
+  "common_cancel": {
+    "message": "Hủy",
+    "description": "Nhãn nút hủy một lượt tải."
+  },
+  "common_unknown": {
+    "message": "—",
+    "description": "Dấu thay cho số liệu chưa biết (tốc độ, thời gian còn lại). Là gạch ngang dài, không phải dấu trừ."
+  },
+  "state_queued": {
+    "message": "Đang chờ",
+    "description": "Trạng thái: lượt tải đã nhận nhưng chưa tới lượt chạy."
+  },
+  "state_probing": {
+    "message": "Đang thăm dò",
+    "description": "Trạng thái: đang hỏi server xem file lớn bao nhiêu và có cho tải theo khoảng byte không."
+  },
+  "state_downloading": {
+    "message": "Đang tải",
+    "description": "Trạng thái: các kết nối song song đang chạy."
+  },
+  "state_paused": {
+    "message": "Tạm dừng",
+    "description": "Trạng thái: người dùng đã tạm dừng."
+  },
+  "state_assembling": {
+    "message": "Đang hoàn tất",
+    "description": "Trạng thái: đã tải xong các phần, đang ghép lại và bàn giao cho trình duyệt."
+  },
+  "state_completed": {
+    "message": "Xong",
+    "description": "Trạng thái: file đã được lưu."
+  },
+  "state_failed": {
+    "message": "Lỗi",
+    "description": "Trạng thái: không tải được."
+  },
+  "state_canceled": {
+    "message": "Đã hủy",
+    "description": "Trạng thái: người dùng đã hủy hoặc lượt tải được trả lại cho trình duyệt."
+  },
+  "unit_byte": {
+    "message": "B",
+    "description": "Viết tắt của byte, dùng cho file dưới 1 KB."
+  },
+  "unit_kilobyte": {
+    "message": "KB",
+    "description": "Viết tắt của kilobyte."
+  },
+  "unit_megabyte": {
+    "message": "MB",
+    "description": "Viết tắt của megabyte."
+  },
+  "unit_gigabyte": {
+    "message": "GB",
+    "description": "Viết tắt của gigabyte."
+  },
+  "unit_terabyte": {
+    "message": "TB",
+    "description": "Viết tắt của terabyte."
+  },
+  "unit_per_second": {
+    "message": "{value}/s",
+    "description": "Tốc độ. {value} là dung lượng đã định dạng sẵn, ví dụ '2,4 MB'."
+  },
+  "duration_seconds": {
+    "message": "{seconds} giây",
+    "description": "Khoảng thời gian dưới một phút. Viết đủ chữ vì người không rành công nghệ đọc 's' không ra ngay."
+  },
+  "duration_minutes": {
+    "message": "{minutes} phút {seconds} giây",
+    "description": "Khoảng thời gian dưới một giờ."
+  },
+  "duration_hours": {
+    "message": "{hours} giờ {minutes} phút",
+    "description": "Khoảng thời gian từ một giờ trở lên."
+  },
+  "popup_auto_title": {
+    "message": "Tự động tăng tốc",
+    "description": "Tên công tắc chính trong popup."
+  },
+  "popup_auto_on": {
+    "message": "Đang bật — cứ tải như bình thường",
+    "description": "Ghi chú dưới công tắc trong popup khi đang bật."
+  },
+  "popup_auto_off": {
+    "message": "Đang tắt — trình duyệt tự tải",
+    "description": "Ghi chú dưới công tắc trong popup khi đang tắt."
+  },
+  "popup_url_placeholder": {
+    "message": "Hoặc dán liên kết vào đây",
+    "description": "Chữ mờ trong ô nhập liên kết ở popup."
+  },
+  "popup_url_label": {
+    "message": "Liên kết cần tải",
+    "description": "Tên đọc được của ô nhập liên kết ở popup. Cần riêng vì chữ mờ biến mất khi người dùng gõ."
+  },
+  "popup_empty": {
+    "message": "Không có gì đang tải",
+    "description": "Hiện trong popup khi danh sách rỗng."
+  },
+  "popup_open_manager": {
+    "message": "Xem tất cả",
+    "description": "Nút mở trang quản lý từ popup."
+  },
+  "popup_threads_badge": {
+    "message": "{count}×",
+    "description": "Huy hiệu nhỏ cạnh tên file, cho biết đang dùng bao nhiêu kết nối. Là ký hiệu nên không dịch."
+  },
+  "popup_threads_title": {
+    "message": "Đang tải bằng {count} kết nối cùng lúc",
+    "description": "Chú thích khi rê chuột lên huy hiệu số kết nối."
+  },
+  "popup_status_downloading": {
+    "message": "{speed} · còn {eta}",
+    "description": "Dòng trạng thái gọn trong popup. {speed} và {eta} đã được định dạng sẵn."
+  },
+  "popup_status_paused": {
+    "message": "Đã tạm dừng",
+    "description": "Dòng trạng thái trong popup khi lượt tải đang dừng."
+  },
+  "popup_status_preparing": {
+    "message": "Đang chuẩn bị…",
+    "description": "Dòng trạng thái trong popup khi đang chờ hoặc đang thăm dò server."
+  },
+  "popup_status_assembling": {
+    "message": "Đang hoàn tất…",
+    "description": "Dòng trạng thái trong popup khi đang ghép file."
+  },
+  "popup_status_failed": {
+    "message": "Không tải được",
+    "description": "Dòng trạng thái trong popup khi lượt tải hỏng. Popup không đủ chỗ cho lý do chi tiết."
+  },
+  "manager_heading": {
+    "message": "Down Faster",
+    "description": "Tiêu đề lớn ở đầu trang quản lý."
+  },
+  "manager_auto_title": {
+    "message": "Tự động tăng tốc",
+    "description": "Tên công tắc chính trong trang quản lý."
+  },
+  "manager_auto_on": {
+    "message": "Đang bật — mọi lượt tải đủ lớn sẽ được tăng tốc",
+    "description": "Ghi chú dưới công tắc trong trang quản lý khi đang bật. Dài hơn bản popup vì có chỗ."
+  },
+  "manager_auto_off": {
+    "message": "Đang tắt — chỉ tăng tốc khi bạn tự dán liên kết",
+    "description": "Ghi chú dưới công tắc trong trang quản lý khi đang tắt."
+  },
+  "manager_url_placeholder": {
+    "message": "Dán liên kết cần tải",
+    "description": "Chữ mờ trong ô nhập liên kết ở trang quản lý."
+  },
+  "manager_url_label": {
+    "message": "Liên kết cần tải",
+    "description": "Tên đọc được của ô nhập liên kết ở trang quản lý."
+  },
+  "manager_empty": {
+    "message": "Chưa có lượt tải nào.",
+    "description": "Hiện trong trang quản lý khi danh sách rỗng."
+  },
+  "manager_progress_of": {
+    "message": "{received} / {total}",
+    "description": "Số byte đã nhận trên tổng số. Cả hai đã được định dạng sẵn, ví dụ '12,3 MB / 700 MB'."
+  },
+  "manager_eta": {
+    "message": "còn {eta}",
+    "description": "Thời gian còn lại, ghép vào dòng số liệu bằng dấu chấm giữa."
+  },
+  "manager_connections": {
+    "message": "Kết nối: {count}",
+    "description": "Số kết nối đang chạy. Viết theo dạng nhãn hai chấm để bản dịch không phải lo số nhiều."
+  },
+  "welcome_page_title": {
+    "message": "Chào mừng đến với Down Faster",
+    "description": "Tên tab của trang chào."
+  },
+  "welcome_heading": {
+    "message": "Tải file nhanh hơn, không cần làm gì thêm",
+    "description": "Tiêu đề lớn của trang chào."
+  },
+  "welcome_intro": {
+    "message": "Down Faster chia mỗi file thành nhiều phần và tải chúng cùng lúc, giống như xếp nhiều người cùng khiêng một thùng hàng thay vì một người.",
+    "description": "Đoạn giải thích đầu trang chào, viết cho người không rành công nghệ."
+  },
+  "welcome_point_auto": {
+    "message": "Cứ tải như bình thường — extension tự động nhận việc.",
+    "description": "Gạch đầu dòng thứ nhất của trang chào."
+  },
+  "welcome_point_smart": {
+    "message": "Chỉ can thiệp khi thật sự tải nhanh hơn được. File nhỏ vẫn để trình duyệt lo.",
+    "description": "Gạch đầu dòng thứ hai của trang chào."
+  },
+  "welcome_point_safe": {
+    "message": "Nếu có trục trặc, file được giao lại cho trình duyệt tải kiểu thường. Bạn không mất file.",
+    "description": "Gạch đầu dòng thứ ba của trang chào."
+  },
+  "welcome_auto_title": {
+    "message": "Tự động tăng tốc",
+    "description": "Tên công tắc trên trang chào."
+  },
+  "welcome_auto_hint": {
+    "message": "Bật để extension tự lo mọi lượt tải.",
+    "description": "Ghi chú dưới công tắc trên trang chào."
+  },
+  "welcome_done": {
+    "message": "Xong, bắt đầu dùng",
+    "description": "Nút đóng trang chào."
+  },
+  "menu_download_link": {
+    "message": "Tải bằng Down Faster",
+    "description": "Mục menu chuột phải trên liên kết, ảnh, video hoặc âm thanh."
+  },
+  "menu_open_manager": {
+    "message": "Mở danh sách tải",
+    "description": "Mục menu chuột phải trên biểu tượng thanh công cụ."
+  },
+  "notice_first_run_title": {
+    "message": "Đang tăng tốc lượt tải này",
+    "description": "Tiêu đề thông báo hệ thống, hiện đúng một lần ở lượt tải đầu tiên."
+  },
+  "notice_first_run_body": {
+    "message": "Down Faster tải file bằng nhiều kết nối cùng lúc. Bấm biểu tượng trên thanh công cụ để xem tiến độ.",
+    "description": "Nội dung thông báo lần đầu. Cần thiết vì thanh tải quen thuộc của trình duyệt không hiện gì trong lúc engine chạy."
+  },
+  "error_no_size": {
+    "message": "Server không cho biết kích thước file",
+    "description": "Lý do không tăng tốc được: thiếu Content-Length."
+  },
+  "error_no_ranges": {
+    "message": "Server không hỗ trợ tải theo khoảng byte",
+    "description": "Lý do không tăng tốc được: server không nhận header Range."
+  },
+  "error_too_small": {
+    "message": "File quá nhỏ để cần tăng tốc",
+    "description": "Lý do không tăng tốc được: dưới ngưỡng cấu hình."
+  },
+  "error_quota": {
+    "message": "Không đủ dung lượng tạm: cần {needed}, còn {available}",
+    "description": "Lỗi khi không đủ chỗ trong bộ nhớ tạm. Hai tham số là dung lượng đã định dạng sẵn."
+  },
+  "error_size_mismatch": {
+    "message": "Kích thước tải về không khớp với số server báo",
+    "description": "Lỗi khi ghép file xong mà tổng số byte lệch — dấu hiệu file hỏng, không được lưu."
+  },
+  "error_generic": {
+    "message": "Không tải được. Bạn thử lại giúp nhé.",
+    "description": "Lỗi dự phòng khi engine không nói rõ nguyên nhân."
+  },
+  "a11y_list_label": {
+    "message": "Danh sách lượt tải",
+    "description": "Tên đọc được của vùng chứa danh sách tải."
+  },
+  "a11y_list_hint": {
+    "message": "Dùng phím mũi tên lên xuống để đi giữa các lượt tải, phím Tab để tới các nút trong một lượt.",
+    "description": "Câu hướng dẫn ẩn khỏi mắt, chỉ trình đọc màn hình thấy. Cần vì phím mũi tên là lối tắt không ai đoán ra."
+  },
+  "a11y_task_row": {
+    "message": "{name}, {state}, {percent} phần trăm",
+    "description": "Tên đọc được của một hàng tải, gộp cả ba thông tin để trình đọc nói một lượt."
+  },
+  "a11y_progress_label": {
+    "message": "Tiến độ tải {name}",
+    "description": "Tên đọc được của thanh tiến độ. Cần vì nhiều hàng có thanh giống hệt nhau."
+  },
+  "a11y_progress_preparing": {
+    "message": "Đang chuẩn bị tải {name}",
+    "description": "Tên đọc được của thanh tiến độ khi chưa biết kích thước file."
+  },
+  "a11y_pause_task": {
+    "message": "Tạm dừng {name}",
+    "description": "Tên đọc được của nút tạm dừng, kèm tên file để phân biệt giữa các hàng."
+  },
+  "a11y_resume_task": {
+    "message": "Tiếp tục {name}",
+    "description": "Tên đọc được của nút chạy tiếp."
+  },
+  "a11y_cancel_task": {
+    "message": "Hủy {name}",
+    "description": "Tên đọc được của nút hủy."
+  },
+  "a11y_started": {
+    "message": "Bắt đầu tải {name}",
+    "description": "Câu đọc lên khi một lượt tải bắt đầu."
+  },
+  "a11y_progress": {
+    "message": "{name}: {percent} phần trăm",
+    "description": "Câu đọc lên ở các mốc tiến độ. Chỉ đọc theo mốc, không đọc mỗi nhịp cập nhật."
+  },
+  "a11y_paused": {
+    "message": "Đã tạm dừng {name}",
+    "description": "Câu đọc lên khi lượt tải chuyển sang tạm dừng."
+  },
+  "a11y_resumed": {
+    "message": "Đã tiếp tục {name}",
+    "description": "Câu đọc lên khi lượt tải chạy lại."
+  },
+  "a11y_assembling": {
+    "message": "Đang hoàn tất {name}",
+    "description": "Câu đọc lên khi bắt đầu ghép file."
+  },
+  "a11y_completed": {
+    "message": "Đã tải xong {name}",
+    "description": "Câu đọc lên khi file đã lưu xong."
+  },
+  "a11y_failed": {
+    "message": "Tải {name} thất bại. {reason}",
+    "description": "Câu đọc lên khi lượt tải hỏng. Đọc ở mức khẩn (assertive) nên cắt ngang câu đang đọc dở."
+  },
+  "a11y_state_change": {
+    "message": "{name}: {state}",
+    "description": "Câu đọc lên cho các thay đổi trạng thái chưa có câu riêng (đang chờ, đang thăm dò). Ghép tên file với nhãn trạng thái để không nuốt mất thông tin."
+  },
+  "a11y_canceled": {
+    "message": "Đã hủy {name}",
+    "description": "Câu đọc lên khi lượt tải bị hủy."
+  },
+  "popup_media_heading": {
+    "message": "Video trên trang này",
+    "description": "Tiêu đề mục liệt kê video mà content script tìm thấy trên tab đang mở."
+  },
+  "popup_media_download": {
+    "message": "Tải video này",
+    "description": "Nút tải một luồng video tìm thấy trên trang."
+  },
+  "popup_media_quality": {
+    "message": "{width}×{height}",
+    "description": "Độ phân giải của video, ví dụ 1920×1080. Chỉ hiện khi thẻ video đã biết kích thước."
+  },
+  "popup_paste_media": {
+    "message": "Đây là liên kết video, sẽ tải và ghép thành một file.",
+    "description": "Câu giải thích khi liên kết người dùng dán vào là playlist chứ không phải file thường."
+  },
+  "manager_tab_downloads": {
+    "message": "Lượt tải",
+    "description": "Nhãn tab danh sách lượt tải trong trang quản lý."
+  },
+  "manager_tab_settings": {
+    "message": "Cài đặt",
+    "description": "Nhãn tab cài đặt trong trang quản lý."
+  },
+  "manager_add_hint": {
+    "message": "Biết nhiều nơi chứa cùng một file? Dán mỗi liên kết một dòng, dòng đầu là nguồn chính.",
+    "description": "Gợi ý dưới ô nhập liên kết: dán nhiều dòng để dùng nhiều nguồn cho cùng một file."
+  },
+  "manager_clear_finished": {
+    "message": "Dọn mục đã xong",
+    "description": "Nút xóa các mục đã xong hoặc đã hỏng khỏi danh sách."
+  },
+  "manager_retry": {
+    "message": "Thử lại",
+    "description": "Nút chạy lại một lượt tải đã thất bại, giữ phần đã tải được."
+  },
+  "manager_front": {
+    "message": "Lên đầu hàng",
+    "description": "Nút đẩy một lượt tải lên đầu hàng chờ."
+  },
+  "manager_priority_label": {
+    "message": "Mức ưu tiên",
+    "description": "Nhãn cho ô chọn mức ưu tiên của một lượt tải."
+  },
+  "manager_queue_position": {
+    "message": "Thứ {position} trong hàng chờ",
+    "description": "Vị trí trong hàng chờ; {position} đếm từ 1 cho người đọc."
+  },
+  "manager_media_badge": {
+    "message": "Video",
+    "description": "Nhãn nhỏ đánh dấu lượt tải này là luồng video ghép từ segment."
+  },
+  "manager_paused_by_schedule": {
+    "message": "Chờ tới khung giờ tải",
+    "description": "Trạng thái của lượt tải bị dừng vì đang ngoài khung giờ, khác với người dùng tự dừng."
+  },
+  "priority_high": {
+    "message": "Cao",
+    "description": "Mức ưu tiên cao trong ô chọn."
+  },
+  "priority_normal": {
+    "message": "Thường",
+    "description": "Mức ưu tiên thường trong ô chọn."
+  },
+  "priority_low": {
+    "message": "Thấp",
+    "description": "Mức ưu tiên thấp trong ô chọn."
+  },
+  "settings_heading": {
+    "message": "Cài đặt",
+    "description": "Tiêu đề bảng cài đặt."
+  },
+  "settings_connections": {
+    "message": "Số kết nối tối đa cho một file",
+    "description": "Nhãn ô nhập trần số kết nối cho một file."
+  },
+  "settings_connections_hint": {
+    "message": "Nhiều hơn không phải lúc nào cũng nhanh hơn. Để chế độ tự dò lo phần này.",
+    "description": "Giải thích vì sao tăng số này không phải lúc nào cũng có lợi."
+  },
+  "settings_adaptive": {
+    "message": "Tự dò số kết nối tốt nhất",
+    "description": "Nhãn công tắc bật bộ dò số kết nối tự động."
+  },
+  "settings_adaptive_hint": {
+    "message": "Mở đủ số kết nối bạn đặt, rồi tự giảm khi server phàn nàn và tăng lại khi nó thôi.",
+    "description": "Giải thích cách bộ dò hoạt động: tăng dần rồi lùi khi server phàn nàn."
+  },
+  "settings_speed": {
+    "message": "Giới hạn tốc độ",
+    "description": "Nhãn ô nhập giới hạn tốc độ."
+  },
+  "settings_speed_hint": {
+    "message": "Kilobyte mỗi giây. Để trống hoặc 0 nghĩa là không giới hạn.",
+    "description": "Đơn vị và ý nghĩa của giá trị 0."
+  },
+  "settings_concurrent": {
+    "message": "Số file tải cùng lúc",
+    "description": "Nhãn ô nhập số file được tải cùng lúc."
+  },
+  "settings_concurrent_hint": {
+    "message": "Phần còn lại xếp hàng chờ, không tranh nhau đường truyền.",
+    "description": "Giải thích phần còn lại sẽ xếp hàng chờ."
+  },
+  "settings_min_size": {
+    "message": "Chỉ tăng tốc file lớn hơn",
+    "description": "Nhãn ô nhập ngưỡng kích thước tối thiểu để tăng tốc."
+  },
+  "settings_min_size_hint": {
+    "message": "Megabyte. File nhỏ hơn được để cho trình duyệt tự tải.",
+    "description": "Đơn vị megabyte và điều gì xảy ra với file nhỏ hơn."
+  },
+  "settings_streaming": {
+    "message": "Vẫn tải khi server giấu kích thước",
+    "description": "Nhãn công tắc cho phép tải khi server không báo kích thước."
+  },
+  "settings_streaming_hint": {
+    "message": "Chỉ dùng được một kết nối, nhưng tự nối lại khi đứt giữa chừng.",
+    "description": "Giải thích hạn chế: chỉ một kết nối, bù lại tự nối lại khi đứt."
+  },
+  "settings_detect_media": {
+    "message": "Tìm video trong trang",
+    "description": "Nhãn công tắc dò video trong trang."
+  },
+  "settings_detect_media_hint": {
+    "message": "Hiện nút tải khi trang đang phát video.",
+    "description": "Giải thích công tắc này ảnh hưởng tới mục video trong popup."
+  },
+  "settings_referer": {
+    "message": "Gửi lại nguồn dẫn",
+    "description": "Nhãn ô chọn mức phát lại nguồn dẫn."
+  },
+  "settings_referer_hint": {
+    "message": "Một số nơi chỉ cho tải khi biết bạn đến từ trang của họ.",
+    "description": "Giải thích vì sao có những nơi cần biết bạn đến từ trang của họ."
+  },
+  "referer_auto": {
+    "message": "Tự động (khuyên dùng)",
+    "description": "Lựa chọn phát lại nguồn dẫn theo chính sách mặc định của trình duyệt."
+  },
+  "referer_full": {
+    "message": "Gửi đầy đủ đường dẫn",
+    "description": "Lựa chọn gửi cả đường dẫn trang gốc."
+  },
+  "referer_origin": {
+    "message": "Chỉ gửi tên miền",
+    "description": "Lựa chọn chỉ gửi tên miền của trang gốc."
+  },
+  "referer_off": {
+    "message": "Không gửi",
+    "description": "Lựa chọn không gửi nguồn dẫn."
+  },
+  "settings_schedule": {
+    "message": "Chỉ tải trong khung giờ",
+    "description": "Nhãn công tắc chỉ cho tải trong khung giờ đã đặt."
+  },
+  "settings_schedule_hint": {
+    "message": "Ngoài khung giờ, mọi lượt tải tự tạm dừng và tự chạy lại khi tới giờ.",
+    "description": "Giải thích lượt tải tự dừng ngoài khung giờ và tự chạy lại khi tới giờ."
+  },
+  "schedule_from": {
+    "message": "Từ",
+    "description": "Nhãn ô giờ bắt đầu của một khung giờ."
+  },
+  "schedule_to": {
+    "message": "Đến",
+    "description": "Nhãn ô giờ kết thúc của một khung giờ."
+  },
+  "schedule_add": {
+    "message": "Thêm khung giờ",
+    "description": "Nút thêm một khung giờ mới."
+  },
+  "schedule_remove": {
+    "message": "Xóa khung giờ này",
+    "description": "Nút xóa một khung giờ."
+  },
+  "schedule_days": {
+    "message": "Ngày áp dụng",
+    "description": "Nhãn nhóm các nút chọn ngày trong tuần của một khung giờ."
+  },
+  "schedule_empty": {
+    "message": "Chưa có khung giờ nào — hiện đang tải mọi lúc.",
+    "description": "Câu hiện khi bật khung giờ nhưng chưa đặt khung nào."
+  },
+  "weekday_0": {
+    "message": "CN",
+    "description": "Chủ nhật, viết tắt trên nút chọn ngày."
+  },
+  "weekday_1": {
+    "message": "T2",
+    "description": "Thứ hai, viết tắt trên nút chọn ngày."
+  },
+  "weekday_2": {
+    "message": "T3",
+    "description": "Thứ ba, viết tắt trên nút chọn ngày."
+  },
+  "weekday_3": {
+    "message": "T4",
+    "description": "Thứ tư, viết tắt trên nút chọn ngày."
+  },
+  "weekday_4": {
+    "message": "T5",
+    "description": "Thứ năm, viết tắt trên nút chọn ngày."
+  },
+  "weekday_5": {
+    "message": "T6",
+    "description": "Thứ sáu, viết tắt trên nút chọn ngày."
+  },
+  "weekday_6": {
+    "message": "T7",
+    "description": "Thứ bảy, viết tắt trên nút chọn ngày."
+  },
+  "settings_saved": {
+    "message": "Đã lưu",
+    "description": "Xác nhận ngắn hiện sau khi một cài đặt được lưu."
+  },
+  "a11y_settings_saved": {
+    "message": "Đã lưu cài đặt",
+    "description": "Câu đọc cho trình đọc màn hình sau khi lưu một cài đặt."
+  }
+}

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="welcome_page_title">Chào mừng đến với Down Faster</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="welcome">
+    <img class="logo" src="icons/128.png" alt="">
+    <h1 data-i18n="welcome_heading">Tải file nhanh hơn, không cần làm gì thêm</h1>
+    <p data-i18n="welcome_intro"></p>
+
+    <ul class="points">
+      <li data-i18n="welcome_point_auto"></li>
+      <li data-i18n="welcome_point_smart"></li>
+      <li data-i18n="welcome_point_safe"></li>
+    </ul>
+
+    <div class="switch-row">
+      <div class="label">
+        <div class="title" data-i18n="welcome_auto_title">Tự động tăng tốc</div>
+        <div class="hint" data-i18n="welcome_auto_hint"></div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="auto" checked data-i18n-aria-label="welcome_auto_title">
+        <span class="track"></span>
+        <span class="thumb"></span>
+      </label>
+    </div>
+
+    <p style="margin-top:20px">
+      <button class="primary" id="done" data-i18n="welcome_done">Xong, bắt đầu dùng</button>
+    </p>
+  </div>
+  <script type="module" src="welcome.js"></script>
+</body>
+</html>

@@ -1,0 +1,425 @@
+{
+  "locale_bcp47": {
+    "message": "en"
+  },
+  "ext_name": {
+    "message": "Down Faster"
+  },
+  "ext_description": {
+    "message": "Speed up downloads with several parallel connections, right inside your browser."
+  },
+  "action_title": {
+    "message": "Down Faster"
+  },
+  "common_download": {
+    "message": "Download"
+  },
+  "common_pause": {
+    "message": "Pause"
+  },
+  "common_resume": {
+    "message": "Resume"
+  },
+  "common_cancel": {
+    "message": "Cancel"
+  },
+  "common_unknown": {
+    "message": "—"
+  },
+  "state_queued": {
+    "message": "Queued"
+  },
+  "state_probing": {
+    "message": "Checking"
+  },
+  "state_downloading": {
+    "message": "Downloading"
+  },
+  "state_paused": {
+    "message": "Paused"
+  },
+  "state_assembling": {
+    "message": "Finishing"
+  },
+  "state_completed": {
+    "message": "Done"
+  },
+  "state_failed": {
+    "message": "Failed"
+  },
+  "state_canceled": {
+    "message": "Canceled"
+  },
+  "unit_byte": {
+    "message": "B"
+  },
+  "unit_kilobyte": {
+    "message": "KB"
+  },
+  "unit_megabyte": {
+    "message": "MB"
+  },
+  "unit_gigabyte": {
+    "message": "GB"
+  },
+  "unit_terabyte": {
+    "message": "TB"
+  },
+  "unit_per_second": {
+    "message": "{value}/s"
+  },
+  "duration_seconds": {
+    "message": "{seconds}s"
+  },
+  "duration_minutes": {
+    "message": "{minutes}m {seconds}s"
+  },
+  "duration_hours": {
+    "message": "{hours}h {minutes}m"
+  },
+  "popup_auto_title": {
+    "message": "Automatic speed-up"
+  },
+  "popup_auto_on": {
+    "message": "On — just download as usual"
+  },
+  "popup_auto_off": {
+    "message": "Off — the browser handles downloads"
+  },
+  "popup_url_placeholder": {
+    "message": "Or paste a link here"
+  },
+  "popup_url_label": {
+    "message": "Link to download"
+  },
+  "popup_empty": {
+    "message": "Nothing downloading"
+  },
+  "popup_open_manager": {
+    "message": "See all"
+  },
+  "popup_threads_badge": {
+    "message": "{count}×"
+  },
+  "popup_threads_title": {
+    "message": "Downloading over {count} parallel connections"
+  },
+  "popup_status_downloading": {
+    "message": "{speed} · {eta} left"
+  },
+  "popup_status_paused": {
+    "message": "Paused"
+  },
+  "popup_status_preparing": {
+    "message": "Getting ready…"
+  },
+  "popup_status_assembling": {
+    "message": "Finishing up…"
+  },
+  "popup_status_failed": {
+    "message": "Download failed"
+  },
+  "manager_heading": {
+    "message": "Down Faster"
+  },
+  "manager_auto_title": {
+    "message": "Automatic speed-up"
+  },
+  "manager_auto_on": {
+    "message": "On — every download large enough gets sped up"
+  },
+  "manager_auto_off": {
+    "message": "Off — only links you paste yourself get sped up"
+  },
+  "manager_url_placeholder": {
+    "message": "Paste a link to download"
+  },
+  "manager_url_label": {
+    "message": "Link to download"
+  },
+  "manager_empty": {
+    "message": "No downloads yet."
+  },
+  "manager_progress_of": {
+    "message": "{received} / {total}"
+  },
+  "manager_eta": {
+    "message": "{eta} left"
+  },
+  "manager_connections": {
+    "message": "Connections: {count}"
+  },
+  "welcome_page_title": {
+    "message": "Welcome to Down Faster"
+  },
+  "welcome_heading": {
+    "message": "Faster downloads, nothing to set up"
+  },
+  "welcome_intro": {
+    "message": "Down Faster splits each file into several parts and fetches them at the same time — like having several people carry one crate instead of just one."
+  },
+  "welcome_point_auto": {
+    "message": "Download as usual — the extension steps in on its own."
+  },
+  "welcome_point_smart": {
+    "message": "It only steps in when that is genuinely faster. Small files are left to the browser."
+  },
+  "welcome_point_safe": {
+    "message": "If anything goes wrong, the file is handed back to the browser to download the normal way. You do not lose it."
+  },
+  "welcome_auto_title": {
+    "message": "Automatic speed-up"
+  },
+  "welcome_auto_hint": {
+    "message": "Turn this on to let the extension handle every download."
+  },
+  "welcome_done": {
+    "message": "Done, let me start"
+  },
+  "menu_download_link": {
+    "message": "Download with Down Faster"
+  },
+  "menu_open_manager": {
+    "message": "Open the download list"
+  },
+  "notice_first_run_title": {
+    "message": "Speeding up this download"
+  },
+  "notice_first_run_body": {
+    "message": "Down Faster is fetching this file over several connections at once. Click the toolbar icon to watch the progress."
+  },
+  "error_no_size": {
+    "message": "The server did not report the file size"
+  },
+  "error_no_ranges": {
+    "message": "The server does not support byte-range downloads"
+  },
+  "error_too_small": {
+    "message": "The file is too small to be worth speeding up"
+  },
+  "error_quota": {
+    "message": "Not enough temporary storage: needs {needed}, only {available} free"
+  },
+  "error_size_mismatch": {
+    "message": "The downloaded size does not match what the server reported"
+  },
+  "error_generic": {
+    "message": "The download failed. Please try again."
+  },
+  "a11y_list_label": {
+    "message": "Download list"
+  },
+  "a11y_list_hint": {
+    "message": "Use the up and down arrow keys to move between downloads, and Tab to reach the buttons inside one."
+  },
+  "a11y_task_row": {
+    "message": "{name}, {state}, {percent} percent"
+  },
+  "a11y_progress_label": {
+    "message": "Download progress for {name}"
+  },
+  "a11y_progress_preparing": {
+    "message": "Getting ready to download {name}"
+  },
+  "a11y_pause_task": {
+    "message": "Pause {name}"
+  },
+  "a11y_resume_task": {
+    "message": "Resume {name}"
+  },
+  "a11y_cancel_task": {
+    "message": "Cancel {name}"
+  },
+  "a11y_started": {
+    "message": "Started downloading {name}"
+  },
+  "a11y_progress": {
+    "message": "{name}: {percent} percent"
+  },
+  "a11y_paused": {
+    "message": "Paused {name}"
+  },
+  "a11y_resumed": {
+    "message": "Resumed {name}"
+  },
+  "a11y_assembling": {
+    "message": "Finishing {name}"
+  },
+  "a11y_completed": {
+    "message": "Finished downloading {name}"
+  },
+  "a11y_failed": {
+    "message": "{name} failed to download. {reason}"
+  },
+  "a11y_state_change": {
+    "message": "{name}: {state}"
+  },
+  "a11y_canceled": {
+    "message": "Canceled {name}"
+  },
+  "popup_media_heading": {
+    "message": "Media on this page"
+  },
+  "popup_media_download": {
+    "message": "Download this video"
+  },
+  "popup_media_quality": {
+    "message": "{width}×{height}"
+  },
+  "popup_paste_media": {
+    "message": "This is a video stream; it will be downloaded and joined into one file."
+  },
+  "manager_tab_downloads": {
+    "message": "Downloads"
+  },
+  "manager_tab_settings": {
+    "message": "Settings"
+  },
+  "manager_add_hint": {
+    "message": "Know several places holding the same file? Paste one link per line; the first is the main source."
+  },
+  "manager_clear_finished": {
+    "message": "Clear finished"
+  },
+  "manager_retry": {
+    "message": "Retry"
+  },
+  "manager_front": {
+    "message": "Move to front"
+  },
+  "manager_priority_label": {
+    "message": "Priority"
+  },
+  "manager_queue_position": {
+    "message": "Number {position} in the queue"
+  },
+  "manager_media_badge": {
+    "message": "Video"
+  },
+  "manager_paused_by_schedule": {
+    "message": "Waiting for the download window"
+  },
+  "priority_high": {
+    "message": "High"
+  },
+  "priority_normal": {
+    "message": "Normal"
+  },
+  "priority_low": {
+    "message": "Low"
+  },
+  "settings_heading": {
+    "message": "Settings"
+  },
+  "settings_connections": {
+    "message": "Maximum connections per file"
+  },
+  "settings_connections_hint": {
+    "message": "More is not always faster. Let auto-tuning handle this."
+  },
+  "settings_adaptive": {
+    "message": "Auto-tune the connection count"
+  },
+  "settings_adaptive_hint": {
+    "message": "Opens as many connections as you set, then backs off when the server complains and recovers after."
+  },
+  "settings_speed": {
+    "message": "Speed limit"
+  },
+  "settings_speed_hint": {
+    "message": "Kilobytes per second. Empty or 0 means no limit."
+  },
+  "settings_concurrent": {
+    "message": "Files downloading at once"
+  },
+  "settings_concurrent_hint": {
+    "message": "The rest wait in line instead of fighting over the connection."
+  },
+  "settings_min_size": {
+    "message": "Only accelerate files larger than"
+  },
+  "settings_min_size_hint": {
+    "message": "Megabytes. Smaller files are left to the browser."
+  },
+  "settings_streaming": {
+    "message": "Download even when the size is unknown"
+  },
+  "settings_streaming_hint": {
+    "message": "Single connection only, but it reconnects when the stream breaks."
+  },
+  "settings_detect_media": {
+    "message": "Find video on pages"
+  },
+  "settings_detect_media_hint": {
+    "message": "Shows a download button while a page is playing video."
+  },
+  "settings_referer": {
+    "message": "Replay the referring page"
+  },
+  "settings_referer_hint": {
+    "message": "Some sites only serve a file when they know you came from their page."
+  },
+  "referer_auto": {
+    "message": "Automatic (recommended)"
+  },
+  "referer_full": {
+    "message": "Send the full path"
+  },
+  "referer_origin": {
+    "message": "Send the domain only"
+  },
+  "referer_off": {
+    "message": "Send nothing"
+  },
+  "settings_schedule": {
+    "message": "Only download during set hours"
+  },
+  "settings_schedule_hint": {
+    "message": "Outside those hours downloads pause themselves and resume when the window opens."
+  },
+  "schedule_from": {
+    "message": "From"
+  },
+  "schedule_to": {
+    "message": "To"
+  },
+  "schedule_add": {
+    "message": "Add a window"
+  },
+  "schedule_remove": {
+    "message": "Remove this window"
+  },
+  "schedule_days": {
+    "message": "Days"
+  },
+  "schedule_empty": {
+    "message": "No windows yet — downloading at any time."
+  },
+  "weekday_0": {
+    "message": "Sun"
+  },
+  "weekday_1": {
+    "message": "Mon"
+  },
+  "weekday_2": {
+    "message": "Tue"
+  },
+  "weekday_3": {
+    "message": "Wed"
+  },
+  "weekday_4": {
+    "message": "Thu"
+  },
+  "weekday_5": {
+    "message": "Fri"
+  },
+  "weekday_6": {
+    "message": "Sat"
+  },
+  "settings_saved": {
+    "message": "Saved"
+  },
+  "a11y_settings_saved": {
+    "message": "Settings saved"
+  }
+}

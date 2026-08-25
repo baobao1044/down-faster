@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": [
+      "ES2022",
+      "WebWorker"
+    ],
+    "types": []
+  },
+  "include": [
+    "src/engine/workers/**/*.ts",
+    "src/shared/protocol.ts",
+    "src/engine/types.ts",
+    "src/engine/throttle.ts"
+  ]
+}
