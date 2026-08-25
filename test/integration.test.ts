@@ -5,7 +5,11 @@ import { DEFAULT_SETTINGS, toDownloadOptions } from '../src/shared/settings';
 import { DEFAULT_OPTIONS } from '../src/engine/types';
 import { failureKind, paceOptionsFor } from '../src/engine/orchestrator';
 import { compareFingerprints } from '../src/engine/adaptive/mirrors';
-import { requireStorage, resetCapabilities } from '../src/platform/capabilities';
+import {
+  detectCapabilities,
+  requireStorage,
+  resetCapabilities,
+} from '../src/platform/capabilities';
 
 /* ---------- Cài đặt tới engine ---------- */
 
@@ -180,4 +184,53 @@ test('chỉ dò một lần cho cả phiên, không tạo file thăm dò mỗi l
   await requireStorage(detect);
   await requireStorage(detect);
   assert.equal(calls, 1);
+});
+
+/* ---------- Dò khả năng thật, theo đúng ngữ cảnh ---------- */
+
+/** OPFS giả, có hoặc không có `createSyncAccessHandle` trên file handle. */
+function fakeStorage(withSyncAccess: boolean) {
+  const fileHandle = withSyncAccess
+    ? { createSyncAccessHandle: () => ({}) }
+    : { createWritable: () => ({}) };
+  return {
+    getDirectory: async () => ({
+      getFileHandle: async () => fileHandle,
+      removeEntry: async () => {},
+    }),
+    persisted: async () => true,
+  };
+}
+
+/**
+ * Lỗi thật, tìm ra khi lần đầu nạp extension vào Chromium.
+ *
+ * `detectCapabilities` dò `createSyncAccessHandle` ngay trên luồng chính của
+ * offscreen document, nhưng theo đặc tả API đó CHỈ tồn tại trong worker. Phép dò
+ * vì thế luôn trả về false, `requireStorage` luôn ném, và mọi lượt tải trên
+ * Chromium đều bị trả lại cho trình duyệt: engine không bao giờ chạy một lần nào.
+ *
+ * Việc ghi thật diễn ra trong `writer-worker`, nơi API đó có thật — nên dò ở
+ * luồng chính là dò sai chỗ.
+ */
+test('dò từ luồng chính không được kết luận là thiếu createSyncAccessHandle', async () => {
+  const caps = await detectCapabilities({ inWorker: false, storage: fakeStorage(false) });
+  assert.equal(caps.opfs, true);
+  assert.equal(caps.syncAccessHandle, true);
+});
+
+test('trong worker thì dò thật: thiếu là thiếu', async () => {
+  const caps = await detectCapabilities({ inWorker: true, storage: fakeStorage(false) });
+  assert.equal(caps.syncAccessHandle, false);
+});
+
+test('trong worker có createSyncAccessHandle thì báo có', async () => {
+  const caps = await detectCapabilities({ inWorker: true, storage: fakeStorage(true) });
+  assert.equal(caps.syncAccessHandle, true);
+});
+
+test('không có OPFS thì vẫn là không, dù ở ngữ cảnh nào', async () => {
+  const caps = await detectCapabilities({ inWorker: false, storage: undefined });
+  assert.equal(caps.opfs, false);
+  assert.equal(caps.syncAccessHandle, false);
 });
