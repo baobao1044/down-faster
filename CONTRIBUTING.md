@@ -623,10 +623,14 @@ is on the machine rather than your change. That job exists to catch the benchmar
 shows up there — not to gate performance. Speed numbers published anywhere in this
 repository are measured on a development machine, never taken from CI.
 
-The workflow itself is untested in the same sense the extension is: it says so in its own
-header comment. Every step was run by hand on Node 22, but the file has never executed on
-GitHub Actions, and the Node 20 leg of the matrix has never run anywhere. Expect to fix
-something on the first green-or-red run.
+The workflow has now run. Its first execution, on the initial commit, went green on both
+matrix legs — a clean `npm ci` plus typecheck, tests and both builds under Node 20 and
+Node 22. The benchmark job also ran and reproduced the ratios measured locally (4.0x and
+8.0x), which is worth knowing mainly because it came from a different machine.
+
+That job is deliberately `continue-on-error: true`. A shared CI runner is not a place to
+gate on wall-clock timing, and it never becomes one — it runs to catch a benchmark that
+stops compiling, not a benchmark that got slower.
 
 ---
 

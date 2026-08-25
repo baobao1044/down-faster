@@ -4,16 +4,17 @@ A browser extension that downloads a file over several parallel HTTP range reque
 instead of one. Chromium and Firefox, Manifest V3, one code base, no external binary,
 no companion app.
 
+[![CI](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml)
+
 `license: MIT` · `status: alpha — never run in a real browser` · `397 tests passing`
 
-*That "397 tests passing" is the author running `npm test` on their own machine, and
-nothing independent has confirmed it. There is no CI badge next to it on purpose:
-`.github/workflows/ci.yml` is written but **has never run, not once** — this repository
-still has no commits and no remote, so GitHub Actions has never seen it. Every check
-below was run by hand on Node 22; the Node 20 leg of the matrix has not been tried
-anywhere, and `npm ci` has never been executed — the lockfile was read against
-`package.json`, not installed clean. A badge belongs here after the first green run, not
-before it.*
+*The badge is real and it is narrow. On the first commit GitHub Actions ran the suite on
+a clean `npm ci` under both Node 20 and Node 22, and both legs went green, so "397 tests
+passing" is no longer only the author's word. What the badge does **not** cover is the
+part that matters most: Actions runs headless Linux with no browser, exactly like the
+development machine, so it exercises the same pure logic and leaves every
+browser-dependent path untouched. A green tick here means the code compiles and the unit
+tests pass. It is not evidence that the extension works.*
 
 > [!WARNING]
 > **This extension has never been run in a real browser. Not once.** The development
@@ -148,6 +149,12 @@ byte-exact output.
 |---|---|---|---|---|
 | 32 MiB @ 2000 KB/s | 16.65–16.74 s | 2.05–2.07 s | 8 | **8.1×** |
 | 4 MiB @ 500 KB/s | 8.22–8.26 s | 2.03–2.04 s | 4 | **4.0×** |
+
+**Reproduced on a second machine.** The benchmark job in CI ran the same thing on a
+GitHub-hosted runner and landed on 4.0x and 8.0x — the 32 MiB case came out one tenth
+below the local 8.1x, which is what a noisy shared runner looks like. Ratios reproducing
+across two unrelated machines is the strongest thing that can be said for these numbers,
+and it is still a statement about one throttled test server, not about the internet.
 
 **Six runs, one machine, ranges on purpose.** The speedup ratios came out identical in
 all six runs; the raw times moved by about 1% between them, which is why the table gives

@@ -123,8 +123,8 @@ async function run(
 
 const base = process.argv[2] ?? 'http://localhost:8787';
 const cases: Array<{ label: string; size: number; kbps: number }> = [
-  { label: '4 MB', size: 4 * 1024 * 1024, kbps: 500 },
-  { label: '32 MB', size: 32 * 1024 * 1024, kbps: 2000 },
+  { label: '4 MiB', size: 4 * 1024 * 1024, kbps: 500 },
+  { label: '32 MiB', size: 32 * 1024 * 1024, kbps: 2000 },
 ];
 
 console.log('Mỗi kết nối bị bóp riêng, trần 8 kết nối.\n');

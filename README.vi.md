@@ -5,16 +5,17 @@
 Một extension tải file bằng nhiều request HTTP `Range` song song thay vì một. Chromium
 và Firefox, Manifest V3, chung một code base, không cần binary ngoài, không cần app đi kèm.
 
+[![CI](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml)
+
 `giấy phép: MIT` · `trạng thái: alpha — chưa từng chạy trong browser thật` · `397 test xanh`
 
-*Cố ý chưa gắn huy hiệu CI. `.github/workflows/ci.yml` đã viết nhưng chưa chạy lần nào:
-lúc viết file đó, repo chưa có commit nào và chưa có remote. Mọi bước bên dưới đều được
-chạy tay trên Node 22; nhánh Node 20 của ma trận chưa thử ở đâu cả, và `npm ci` cũng chưa
-từng chạy — lockfile mới chỉ được đối chiếu bằng mắt với `package.json`, không phải một
-lần cài sạch quan sát được. Huy hiệu sẽ gắn sau lần chạy xanh đầu tiên, không phải trước.
-Con số 397 test cũng cần đọc đúng như vậy: nó là kết quả `npm test` do chính tác giả chạy
-trên máy mình, không có hệ thống độc lập nào xác nhận — đừng đọc nó như một huy hiệu CI
-xanh.*
+*Huy hiệu này có thật, và nó hẹp. Ngay ở commit đầu tiên, GitHub Actions đã chạy bộ test
+trên một lần `npm ci` sạch với cả Node 20 lẫn Node 22, cả hai nhánh đều xanh — nên con số
+397 không còn chỉ là lời của tác giả nữa. Nhưng thứ huy hiệu KHÔNG bao gồm lại đúng là
+thứ quan trọng nhất: Actions chạy Linux không màn hình, không có browser nào, y hệt máy
+phát triển. Nó kiểm đúng phần logic thuần và không chạm được vào một đường phụ thuộc
+trình duyệt nào. Dấu tick xanh ở đây nghĩa là code biên dịch được và test đơn vị qua.
+Nó KHÔNG phải bằng chứng rằng extension chạy được.*
 
 > [!WARNING]
 > **Extension này chưa từng chạy trong một trình duyệt thật. Chưa một lần nào.** Máy phát
@@ -160,6 +161,13 @@ Kết quả sáu lần chạy `npm run bench` ngày 25-08-2026, trần 8 kết n
 | tăng tốc (bộ dò AIMD, bản đang chạy) | 2,03 – 2,04 s | 2,05 – 2,07 s |
 | **nhanh gấp, so với một kết nối** | **4,0 lần** | **8,1 lần** |
 | đỉnh kết nối engine thật sự dùng | **4** | 8 |
+
+**Đã tái lập trên một máy thứ hai.** Job đo tốc độ trong CI chạy đúng phép đo này trên
+runner của GitHub và ra 4,0 lần và 8,0 lần — ca 32 MiB thấp hơn bản chạy tại chỗ đúng
+một phần mười, tức là đúng dáng của một máy dùng chung nhiều nhiễu. Tỉ lệ tái lập được
+trên hai máy không liên quan gì tới nhau là điều mạnh nhất có thể nói về mấy con số này,
+và nó vẫn chỉ là một phát biểu về một server test bị bóp băng thông, không phải về
+internet thật.
 
 **Ghi khoảng chứ không ghi một con số — cố ý.** Tỉ lệ thì ổn định tuyệt đối qua cả sáu
 lần, thời gian thô thì không, nên trích một lần chạy tới hai chữ số thập phân — kiểu
