@@ -1,5 +1,7 @@
 {
   "minimum_chrome_version": "116",
+  "author": "BaoBG",
+  "homepage_url": "https://github.com/baobao1044/down-faster",
   "background": {
     "service_worker": "background.js",
     "type": "module"

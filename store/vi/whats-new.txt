@@ -1,0 +1,6 @@
+Sửa: tải file trên Chromium (dò khả năng OPFS)
+Sửa: lượt tải gzip/nén trên đường truyền
+Sửa: race lúc khởi động có thể mất lượt tải đầu tiên
+Thêm: bộ test E2E trong trình duyệt
+Thêm: kiểm tra kiểu cho test trong CI
+Cải thiện: i18n, giao diện

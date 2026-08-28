@@ -1,0 +1,11 @@
+Down Faster tăng tốc tải file bằng nhiều request HTTP Range song song thay vì một kết nối duy nhất. Chạy trên Chromium và Firefox, ngay trong trình duyệt — không cần app ngoài.
+
+Tính năng chính:
+- Tối đa 8 kết nối song song mỗi file
+- Ghi qua OPFS (không phình RAM)
+- Số kết nối tự điều chỉnh (AIMD)
+- Tạm dừng, tiếp tục, thử lại, hủy
+- Quản lý hàng đợi theo ưu tiên
+- Giới hạn tốc độ và khung giờ tải
+- Tải video HLS
+- Truy cập đầy đủ bằng bàn phím

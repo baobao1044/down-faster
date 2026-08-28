@@ -1,0 +1,6 @@
+Fixed: downloads on Chromium (OPFS capability probe)
+Fixed: gzip/transport-compressed downloads
+Fixed: startup race that could lose the first download
+Added: E2E browser test harness
+Added: type checking for tests in CI
+Improved: i18n, UI polish

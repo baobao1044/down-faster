@@ -6,10 +6,10 @@ no companion app.
 
 [![CI](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/baobao1044/down-faster/blob/main/LICENSE) [![Tests](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/baobao1044/down-faster/blob/main/CONTRIBUTING.md)
 
-`license: MIT` · `status: alpha — core path verified in a real browser` · `401 tests passing`
+`license: MIT` · `status: alpha — core path verified in a real browser` · `420 tests passing`
 
 *The badge is real and it is narrow. On the first commit GitHub Actions ran the suite on
-a clean `npm ci` under both Node 20 and Node 22, and both legs went green, so "401 tests
+a clean `npm ci` under both Node 20 and Node 22, and both legs went green, so "420 tests
 passing" is no longer only the author's word. What the badge does **not** cover is the
 part that matters most: Actions runs headless Linux with no browser, so it exercises the same pure logic and leaves every
 browser-dependent path untouched. A green tick here means the code compiles and the unit
@@ -313,7 +313,7 @@ npm run build:dev      # the same two bundles, with [df:…] logging left in
 npm run build:chromium
 npm run build:firefox
 npm run watch          # rebuild on change; implies --dev
-npm test               # 401 tests, in about a second
+npm test               # 420 tests, in about a second
 npm run typecheck      # tsconfig.json and tsconfig.worker.json
 npm run clean
 ```
@@ -526,7 +526,7 @@ it. PRIVACY.md goes through it permission by permission.
 | | |
 |---|---|
 | TypeScript in `src/` | 13,393 lines across 40 files |
-| Tests | 5,467 lines, 8 files, 401 cases, `node:test`, no test framework dependency |
+| Tests | 5,467 lines, 8 files, 420 cases, `node:test`, no test framework dependency |
 | Runtime dependencies | none |
 | Build dependencies | esbuild, typescript, `@types/chrome` |
 | Localisation | 141 keys, Vietnamese and English, every Vietnamese key carries a translator description (enforced by a test) |
