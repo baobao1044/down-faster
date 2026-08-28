@@ -57,6 +57,15 @@ jobs:
       - name: Kiểm kiểu
         run: npm run typecheck
 
+      # npm run typecheck:tests chạy tsc lần thứ ba với tsconfig.test.json,
+      # bao gồm test/** và bench/** — vốn KHÔNG được kiểm kiểu ở bước trên vì
+      # tsconfig.json và tsconfig.worker.json chỉ include src/**. Trước WP3,
+      # các test chỉ được bundle bằng esbuild (xoá kiểu, không kiểm) rồi chạy
+      # bằng node:test, nên lỗi kiểu trong test/bench hoàn toàn lọt qua. Bước
+      # này đóng cổng đó. Cần thêm @types/node vì test/bench dùng Buffer/process.
+      - name: Kiểm kiểu test và bench
+        run: npm run typecheck:tests
+
       # scripts/test.mjs bundle test/*.test.ts sang ESM rồi chạy bằng node:test.
       # Lúc viết file này là 397 test, và cả 397 đều do tác giả chạy tay trên máy phát
       # triển với Node 22 — workflow này thì chưa chạy lần nào, xem ghi chú đầu file.
