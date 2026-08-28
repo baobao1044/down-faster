@@ -14,6 +14,7 @@ import type {
   MediaFound,
   MediaListResponse,
 } from '../shared/rpc';
+import { createEngineChannel } from '../shared/engine-channel';
 import { log, warn } from '../shared/log';
 
 /**
@@ -199,25 +200,27 @@ if (isFirefox) {
   })();
 }
 
-/** Bảo đảm engine đang chạy trước khi gửi việc cho nó. */
-async function withEngine(): Promise<void> {
-  if (isFirefox) return;
-  await ensureDocumentContext();
-}
+/**
+ * Cửa chặn engine: đệm mọi lệnh qua cửa sổ race khởi động ~190ms trên Chromium
+ * (engine ở offscreen document, listener đăng ký chậm hơn document), và gửi
+ * thẳng trên Firefox. Tạo một lần ở tầm module.
+ */
+const channel = createEngineChannel({
+  // Firefox: engine chạy cùng ngữ cảnh với background, mà runtime.sendMessage
+  // không gửi được cho chính người gửi — gọi thẳng dispatchEngineRequest. Giữ
+  // nguyên nhánh localReady cũ: chờ engine dựng xong rồi mới phát lệnh.
+  directDispatch: isFirefox
+    ? async (request) => {
+        if (!localReady) return undefined;
+        dispatchEngineRequest(await localReady, request, () => {});
+        return undefined;
+      }
+    : undefined,
+});
 
-async function send(request: EngineRequest): Promise<void> {
-  // Firefox: engine ở ngay trong ngữ cảnh này, mà runtime.sendMessage không gửi
-  // được cho chính người gửi. Gọi thẳng, đừng gửi vào hư không.
-  if (localReady) {
-    dispatchEngineRequest(await localReady, request, () => {});
-    return;
-  }
-  await withEngine();
-  try {
-    await api.runtime.sendMessage(request);
-  } catch (err) {
-    warn('background', 'engine không phản hồi', err);
-  }
+/** Phát lệnh tới engine; không bao giờ mất lệnh trong cửa sổ race khởi động. */
+function send(request: EngineRequest): Promise<void> {
+  return channel.send(request);
 }
 
 /* ---------- Nhận yêu cầu từ engine (chỉ Chromium dùng đường này) ---------- */
