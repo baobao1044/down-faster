@@ -1,4 +1,4 @@
-import { api, ensureDocumentContext, isFirefox } from '../platform/api';
+import { api } from '../platform/api';
 import type {
   EngineBroadcast,
   EngineRequest,
@@ -7,6 +7,7 @@ import type {
   MediaListResponse,
   TaskSnapshot,
 } from '../shared/rpc';
+import { createEngineChannel } from '../shared/engine-channel';
 import { loadSettings, saveSettings } from '../shared/settings';
 import { applyI18n, t } from '../shared/i18n';
 import { byId, el, on, setHidden, setText } from './dom';
@@ -24,13 +25,15 @@ const openEl = byId<HTMLButtonElement>('open');
 
 const announcer = new ProgressAnnouncer();
 
-async function call(request: EngineRequest): Promise<EngineResponse | undefined> {
-  if (!isFirefox) await ensureDocumentContext();
-  try {
-    return (await api.runtime.sendMessage(request)) as EngineResponse;
-  } catch {
-    return undefined;
-  }
+/**
+ * Cửa chặn engine: đệm lệnh qua cửa sổ race khởi động ~190ms trên Chromium. UI
+ * mở sau khi event page đã lên, nhưng listener của offscreen document vẫn có thể
+ * đăng ký chậm hơn document, nên ping-gate + đệm FIFO vẫn cần để khỏi mất lệnh.
+ */
+const channel = createEngineChannel();
+
+function call(request: EngineRequest): Promise<EngineResponse | undefined> {
+  return channel.call(request);
 }
 
 /* ---------- Công tắc ---------- */

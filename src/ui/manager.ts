@@ -1,4 +1,4 @@
-import { api, ensureDocumentContext, isFirefox } from '../platform/api';
+import { api } from '../platform/api';
 import type { EngineBroadcast, EngineRequest, EngineResponse, TaskSnapshot } from '../shared/rpc';
 import type { Priority } from '../engine/queue';
 import { loadSettings, saveSettings, type Settings } from '../shared/settings';
@@ -10,6 +10,7 @@ import {
   type Weekday,
 } from '../engine/schedule';
 import type { RefererMode } from '../engine/adaptive/headers';
+import { createEngineChannel } from '../shared/engine-channel';
 import { applyI18n, t } from '../shared/i18n';
 import { byId, el, on, setClass, setHidden, setText } from './dom';
 import { initA11y, installRovingList, ProgressAnnouncer, announce } from './a11y';
@@ -33,13 +34,15 @@ const roving = installRovingList(listEl, { itemSelector: '.task', wrap: true });
 
 let settings: Settings;
 
-async function call(request: EngineRequest): Promise<EngineResponse | undefined> {
-  if (!isFirefox) await ensureDocumentContext();
-  try {
-    return (await api.runtime.sendMessage(request)) as EngineResponse;
-  } catch {
-    return undefined;
-  }
+/**
+ * Cửa chặn engine: đệm lệnh qua cửa sổ race khởi động ~190ms trên Chromium. UI
+ * mở sau khi event page đã lên, nhưng listener của offscreen document vẫn có thể
+ * đăng ký chậm hơn document, nên ping-gate + đệm FIFO vẫn cần để khỏi mất lệnh.
+ */
+const channel = createEngineChannel();
+
+function call(request: EngineRequest): Promise<EngineResponse | undefined> {
+  return channel.call(request);
 }
 
 /* ---------- Tab ---------- */
