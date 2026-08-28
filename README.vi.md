@@ -7,39 +7,41 @@ và Firefox, Manifest V3, chung một code base, không cần binary ngoài, kh�
 
 [![CI](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml)
 
-`giấy phép: MIT` · `trạng thái: alpha — chưa từng chạy trong browser thật` · `397 test xanh`
+`giấy phép: MIT` · `trạng thái: alpha — đường lõi đã chạy trong Chromium thật` · `401 test xanh`
 
 *Huy hiệu này có thật, và nó hẹp. Ngay ở commit đầu tiên, GitHub Actions đã chạy bộ test
 trên một lần `npm ci` sạch với cả Node 20 lẫn Node 22, cả hai nhánh đều xanh — nên con số
-397 không còn chỉ là lời của tác giả nữa. Nhưng thứ huy hiệu KHÔNG bao gồm lại đúng là
-thứ quan trọng nhất: Actions chạy Linux không màn hình, không có browser nào, y hệt máy
-phát triển. Nó kiểm đúng phần logic thuần và không chạm được vào một đường phụ thuộc
+401 không còn chỉ là lời của tác giả nữa. Nhưng thứ huy hiệu KHÔNG bao gồm lại đúng là
+thứ quan trọng nhất: Actions chạy Linux không màn hình, không có browser nào. Nó kiểm đúng phần logic thuần và không chạm được vào một đường phụ thuộc
 trình duyệt nào. Dấu tick xanh ở đây nghĩa là code biên dịch được và test đơn vị qua.
 Nó KHÔNG phải bằng chứng rằng extension chạy được.*
 
-> [!WARNING]
-> **Extension này chưa từng chạy trong một trình duyệt thật. Chưa một lần nào.** Máy phát
-> triển không cài browser, nên mọi đường phụ thuộc trình duyệt mới chỉ đúng trên giấy và
-> qua test đơn vị, chưa ai từng thấy nó chạy: OPFS và `createSyncAccessHandle`, Web
-> Worker, offscreen document, `chrome.alarms`, `declarativeNetRequest`,
-> `chrome.downloads`, content script.
+> [!NOTE]
+> **Bằng chứng trình duyệt, thời điểm giữa‑2026‑08.** Extension đã được nạp vào Chromium thật
+> và engine đã tải file thật sự — chuyện chưa từng xảy ra trước khi sửa phép dò khả năng
+> `detectCapabilities()`: nó từng hỏi `createSyncAccessHandle` trên **luồng chính** của offscreen
+> document — nơi đặc tả nói handle đó không bao giờ tồn tại — nên mọi lượt tải đều bị trả lại
+> cho trình duyệt. Giờ thì engine chạy trong offscreen document (xem vị trí log ở checklist dưới).
 >
-> Phần logic thuần có 397 test xanh, nhưng chính đoạn nối các mảnh đã test đó lại thành
-> một lượt tải thật — `DownloadJob` (815 dòng) và `HlsJob` (574 dòng) — thì cũng không có
-> test nào. Khoảng 34% `src/` không được test — con số cụ thể ở mục
-> [Test phủ tới đâu](#test-phủ-tới-đâu). Chưa ai ngoài tác giả dùng thử, và nó chưa lên
-> store nào.
+> Đã kiểm chứng end‑to‑end: `/slow/104857600` tải bằng 8 kết nối song song (32 piece),
+> đúng từng byte theo `npm run verify`; `/norange` lui về 1 kết nối; `/named` đọc đúng
+> tên `filename*=UTF-8''`; `/flaky` chịu được đứt kết nối giữa chừng; file nhỏ và
+> `/norange/104857600` được trả lại cho trình duyệt đúng cách; mọi file hoàn tất đều khớp
+> từng byte. **Chưa kiểm chứng** (tới nay chỉ kiểm thủ công): tạm dừng/tiếp tục, hủy,
+> khôi phục sau khi tắt browser, hàng đợi, giới hạn tốc độ, hẹn giờ, stream kích thước
+> không rõ, mirrors, ghép HLS, bàn phím/screen reader, đổi ngôn ngữ. **Lỗi đã biết:**
+> `/gzip` — Chrome từ chối request có Range trả về `200 + content-encoding: gzip`, nên lượt
+> tải gzip bị trả lại cho trình duyệt (chế độ auto) và hỏng (chế độ manual); đang sửa.
 >
-> **Chế độ tự động BẬT SẴN, và content script cũng vậy.** `DEFAULT_SETTINGS` trong
-> `src/shared/settings.ts` đặt `autoMode: true` *và* `detectMedia: true`. Nghĩa là cài
-> xong, không bấm gì cả: extension tự giành **mọi** lượt tải trên 5 MiB, và content script
-> dò video chạy trên **mọi** trang bạn mở. Đúng phần mã đi giành đó nằm trong 34% chưa có
-> test và chưa từng chạy. Muốn thử an toàn thì tắt hai công tắc này trước khi lướt web
-> bình thường: trang quản lý → **Tự động tăng tốc** (tắt), và tab *Cài đặt* → **Tìm video
-> trong trang** (tắt).
+> **Chế độ tự động và dò video đều BẬT sẵn** — `autoMode: true` *và* `detectMedia: true` trong
+> `src/shared/settings.ts`. Cài xong là extension tự giành mọi lượt tải trên 5 MiB và dò video
+> trên mọi trang bạn mở. Cả hai đều là công tắc: tắt **Tự động tăng tốc** trên trang quản lý
+> hoặc trong popup, và **Cài đặt → Tìm video trong trang** để ngừng dò. Làm vậy trước khi
+> lướt web bình thường.
 >
-> **Đừng dùng cho việc gì quan trọng.** Hãy coi đây là một thiết kế và một bộ test, tình
-> cờ biên dịch ra được hai extension nạp được vào trình duyệt.
+> **Chưa nên dùng cho việc gì quan trọng.** Một lỗi đã biết (trên), và nhiều đường còn chưa
+> từng chạy trong browser. Coi đây là bản thiết kế, bộ test, và một checklist đang khép
+> dần chứ chưa khép xong.
 
 ---
 
@@ -219,7 +221,7 @@ npm run build:dev          # cùng hai target, nhưng giữ log [df:…] và sou
 npm run build:chromium     # hoặc chỉ một target
 npm run build:firefox
 npm run watch              # build lại khi sửa file; ngầm bật --dev
-npm test                   # 397 test
+npm test                   # 401 test
 npm run typecheck          # tsconfig.json và tsconfig.worker.json
 npm run testserver         # http://localhost:8787
 npm run bench              # cần testserver chạy trước ở cửa sổ khác
@@ -290,11 +292,11 @@ vòng lặp tự giành lại chính lượt tải nó vừa buông ra (có test
 ### Test tự động
 
 ```bash
-npm test         # 397 test, chạy trong khoảng một giây
+npm test         # 401 test, chạy trong khoảng một giây
 npm run typecheck
 ```
 
-397 test, 0 fail, 0 skip, 0 todo. Phân rã theo file:
+401 test, 0 fail, 0 skip, 0 todo. Phân rã theo file:
 
 | File | Số test | Phủ cái gì |
 |---|---|---|
@@ -398,9 +400,13 @@ npm run verify ~/Downloads/ten-file.bin
 
 ### Danh sách kiểm thử thủ công
 
-Đây là thứ để lấp đúng khoảng trống "chưa từng chạy trong browser". Chưa mục nào được
-làm. Nạp `dist/chromium` hoặc `dist/firefox`, chạy server test, rồi dán liên kết vào
-trang quản lý.
+Trạng thái 21 mục tính tới commit này — đã kiểm chứng trên Chromium thật: mục 1, 2,
+4, 5, 8, 9, 10; lỗi đã biết: mục 3 (`/gzip`); các mục còn lại (6–7, 11–21)
+mới chỉ kiểm thủ công. Build bằng `npm run build:dev` trước khi bắt đầu, không thì
+console gần như trống — bản build mặc định không giữ `log()` nào và không in `console.error`
+ở đâu. Log nằm ở `chrome://extensions` → *Details* → *Inspect views* →
+`offscreen.html` (engine chạy ở đó, không phải service worker), hay
+`about:debugging#/runtime/this-firefox` → *Inspect* trên Firefox.
 
 Đường tải cơ bản:
 
@@ -554,6 +560,8 @@ Chưa xong, hoặc chưa chứng minh được:
 chỗ có thể tối ưu thêm. Và như bảng đo cho thấy, mức tăng tốc còn bị chặn bởi số piece,
 mà số piece bị chặn bởi kích thước file.
 
+Lõi phụ thuộc trình duyệt giờ đã chạy end‑to‑end trong Chromium thật (xem danh sách đã kiểm chứng ở trên), dù nhiều đường vẫn chỉ kiểm thủ công và một lỗi đã biết (`/gzip`) đang theo dõi. Phần được test thì test kỹ; code nối chúng lại thành lượt tải không có test riêng nhưng không còn chưa từng quan sát: nó đã chạy.
+
 **Không có BitTorrent, và sẽ không bao giờ có.** Trình duyệt không cho mở TCP socket.
 WASM cũng không cứu được: WebTorrent chỉ nói chuyện được với peer WebRTC nên gần như
 không tìm ra seeder.
@@ -592,7 +600,7 @@ logic, bơm cổng giả vào là test được, và chúng đang là khoảng t
 | | |
 |---|---|
 | TypeScript trong `src/` | 13.393 dòng, 40 file |
-| Test | 5.467 dòng, 8 file, 397 ca, chạy bằng `node:test`, không phụ thuộc framework nào |
+| Test | 5.467 dòng, 8 file, 401 ca, chạy bằng `node:test`, không phụ thuộc framework nào |
 | Phụ thuộc lúc chạy | không có |
 | Phụ thuộc lúc build | esbuild, typescript, `@types/chrome` |
 | Bản địa hóa | 141 khóa, tiếng Việt và tiếng Anh; mỗi khóa tiếng Việt đều có description cho người dịch, có test bắt buộc |

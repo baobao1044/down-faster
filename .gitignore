@@ -3,3 +3,5 @@ dist/
 *.zip
 *.log
 .DS_Store
+*.pid
+release/

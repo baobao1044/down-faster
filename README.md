@@ -6,39 +6,46 @@ no companion app.
 
 [![CI](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml)
 
-`license: MIT` · `status: alpha — never run in a real browser` · `397 tests passing`
+`license: MIT` · `status: alpha — core path verified in a real browser` · `401 tests passing`
 
 *The badge is real and it is narrow. On the first commit GitHub Actions ran the suite on
-a clean `npm ci` under both Node 20 and Node 22, and both legs went green, so "397 tests
+a clean `npm ci` under both Node 20 and Node 22, and both legs went green, so "401 tests
 passing" is no longer only the author's word. What the badge does **not** cover is the
-part that matters most: Actions runs headless Linux with no browser, exactly like the
-development machine, so it exercises the same pure logic and leaves every
+part that matters most: Actions runs headless Linux with no browser, so it exercises the same pure logic and leaves every
 browser-dependent path untouched. A green tick here means the code compiles and the unit
 tests pass. It is not evidence that the extension works.*
 
-> [!WARNING]
-> **This extension has never been run in a real browser. Not once.** The development
-> machine has no browser installed, so every browser-dependent path is correct on paper
-> and in unit tests only — never observed working: OPFS and `createSyncAccessHandle`,
-> Web Workers, the offscreen document, `chrome.alarms`, `declarativeNetRequest`,
-> `chrome.downloads`, and the content script.
+> [!NOTE]
+> **Browser evidence, as of mid‑2026‑08.** The extension has been loaded into a real
+> Chromium, and its engine has actually downloaded files — something that had never
+> happened until the capability-probe fix: `detectCapabilities()` asked for
+> `createSyncAccessHandle` on the offscreen document's **main thread**, where the spec says
+> that handle can never exist, so every download was booked back to the browser. With that
+> fixed, the engine runs in the offscreen document (see the checklist below for log locations).
 >
-> The pure logic has 397 passing tests, but the code that wires those tested pieces into
-> an actual download — `DownloadJob` (815 lines) and `HlsJob` (574 lines) — has no tests
-> either. Roughly 34% of `src/` is untested. Nobody but the author has ever run it, and
-> it is not on any extension store.
+> Verified end-to-end: `/slow/104857600` downloads via 8 parallel connections (32 pieces),
+> byte-exact per `npm run verify`; `/norange` falls back to 1 connection; `/named` parses
+> the `filename*=UTF-8''` name; `/flaky` survives mid-transfer drops; small files and
+> `/norange/104857600` are correctly handed back to the browser; every completed file tests
+> byte-exact. **Not yet verified** (manual-only so far): pause/resume, cancel, recovery
+> after killing the browser, queue, speed limit, schedule, unknown-size streaming,
+> mirrors, HLS assembly, keyboard/screen-reader flows, and language switching. **Known
+> bug:** `/gzip` — Chrome rejects a ranged request that comes back
+> `200 + content-encoding: gzip`, so gzipped downloads are handed back in auto mode (and
+> fail in manual mode); a fix is tracked.
 >
 > **Auto mode and page scanning are both on by default** — `autoMode: true` *and*
 > `detectMedia: true` in `src/shared/settings.ts`. From the moment the extension is
 > loaded it takes over every download above 5 MiB without being asked, and its content
 > script runs on every page you open, in every frame, looking for `<video>` tags and
-> `.m3u8` URLs. The code that does the taking over is in the untested 34%. Both are
-> switches, not fixed behaviour: turn off **Automatic speed-up** on the manager page or
-> in the popup to leave downloads to the browser, and **Settings → Find video on pages**
-> to stop the page scanning. Do that before browsing normally.
+> `.m3u8` URLs. Both are switches, not fixed behaviour: turn off **Automatic speed-up**
+> on the manager page or in the popup to leave downloads to the browser, and
+> **Settings → Find video on pages** to stop the page scanning. Do that before browsing
+> normally.
 >
-> **Do not use this for anything that matters.** Treat it as a design and a test suite
-> that happens to compile into two loadable extensions.
+> **Do not use this for anything that matters yet.** One failure mode is known (above);
+> several paths have never run in a browser. Treat it as a design, a test suite, and a
+> checklist that is closing, not closed.
 
 ---
 
@@ -306,7 +313,7 @@ npm run build:dev      # the same two bundles, with [df:…] logging left in
 npm run build:chromium
 npm run build:firefox
 npm run watch          # rebuild on change; implies --dev
-npm test               # 397 tests, in about a second
+npm test               # 401 tests, in about a second
 npm run typecheck      # tsconfig.json and tsconfig.worker.json
 npm run clean
 ```
@@ -355,11 +362,13 @@ shows up immediately.
 <details>
 <summary><b>Manual verification checklist (21 items) — the gap this project needs closed</b></summary>
 
-Nothing here has been done. Build with `npm run build:dev` before you start, or the
-consoles will be nearly empty — a default build keeps no `log()` calls and emits no
-`console.error` anywhere. Logs live in `chrome://extensions` → *Details* →
-*Inspect views* → `offscreen.html` (the engine runs there, not in the service worker),
-or `about:debugging#/runtime/this-firefox` → *Inspect* on Firefox.
+Status of the 21 items as of this commit — verified on a real Chromium: items 1, 2,
+4, 5, 8, 9, and 10; known broken: item 3 (`/gzip`); the rest (6–7, 11–21)
+remain manual-only. Build with `npm run build:dev` before you start, or the consoles will
+be nearly empty — a default build keeps no `log()` calls and emits no `console.error`
+anywhere. Logs live in `chrome://extensions` → *Details* → *Inspect views* →
+`offscreen.html` (the engine runs there, not in the service worker), or
+`about:debugging#/runtime/this-firefox` → *Inspect* on Firefox.
 
 1. `/slow/104857600?kbps=200` — manager shows 8 connections, `/stats` agrees
 2. `/norange/10485760` — drops to 1 connection and still completes
@@ -401,9 +410,10 @@ or `about:debugging#/runtime/this-firefox` → *Inspect* on Firefox.
 **Multiple connections only help when the server throttles per connection.** If your own
 link is the bottleneck, this extension cannot make anything faster.
 
-**It has never run in a browser**, and about 34% of `src/` has no test. The tested
-pieces are tested well; the code that assembles them into a download is neither tested
-nor observed.
+**The browser-dependent core has now been exercised end-to-end in a real Chromium**
+(see the verified-status list above), though several paths remain manual-only and one
+known bug (`/gzip`) is tracked. The tested pieces are tested well; the code that assembles
+them into a download has no dedicated tests but is no longer unobserved: it has run.
 
 **Type checking does not cover the tests.** Both tsconfigs include only `src/**`, so the
 5,467 lines in `test/` plus the 163 lines of `bench/bench.ts` — 5,630 lines in total —
@@ -516,7 +526,7 @@ it. PRIVACY.md goes through it permission by permission.
 | | |
 |---|---|
 | TypeScript in `src/` | 13,393 lines across 40 files |
-| Tests | 5,467 lines, 8 files, 397 cases, `node:test`, no test framework dependency |
+| Tests | 5,467 lines, 8 files, 401 cases, `node:test`, no test framework dependency |
 | Runtime dependencies | none |
 | Build dependencies | esbuild, typescript, `@types/chrome` |
 | Localisation | 141 keys, Vietnamese and English, every Vietnamese key carries a translator description (enforced by a test) |
