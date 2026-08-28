@@ -4,7 +4,7 @@ A browser extension that downloads a file over several parallel HTTP range reque
 instead of one. Chromium and Firefox, Manifest V3, one code base, no external binary,
 no companion app.
 
-[![CI](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml)
+[![CI](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/baobao1044/down-faster/blob/main/LICENSE) [![Tests](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/baobao1044/down-faster/blob/main/CONTRIBUTING.md)
 
 `license: MIT` · `status: alpha — core path verified in a real browser` · `401 tests passing`
 

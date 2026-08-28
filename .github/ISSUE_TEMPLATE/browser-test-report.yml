@@ -15,12 +15,13 @@ body:
         **Thank you — genuinely.** You are about to do the one thing this project cannot
         do for itself.
 
-        Down Faster has 397 passing unit tests, a clean typecheck, and a benchmark that
-        runs the real piece planner. It has also never been loaded into a browser, not
-        once. OPFS and `createSyncAccessHandle`, the two Web Workers, the Chromium
-        offscreen document, `chrome.alarms`, `declarativeNetRequest`,
-        `chrome.downloads`, the content script — all of it is correct on paper and
-        observed nowhere. Your report converts one of those paper claims into a fact.
+        Down Faster has 420 passing unit tests, a clean typecheck, and a benchmark that
+        runs the real piece planner. Browser testing is being completed; see the README
+        verification section. OPFS and `createSyncAccessHandle`, the two Web Workers, the
+        Chromium offscreen document, `chrome.alarms`, `declarativeNetRequest`,
+        `chrome.downloads`, the content script — the core path has now been observed in a
+        real browser, but many paths remain only correct on paper. Your report converts
+        one of those remaining paper claims into a fact.
 
         The tests do not cover the gap either. About 34% of `src/` has no test at all,
         including the 815-line class that drives a download from beginning to end
