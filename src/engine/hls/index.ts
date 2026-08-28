@@ -151,6 +151,9 @@ async function readCapped(res: Response, limit: number): Promise<string> {
 async function fetchText(url: string, signal?: AbortSignal): Promise<{ text: string; finalUrl: string }> {
   const res = await fetch(url, {
     method: 'GET',
+    // Playlist là văn bản nhưng vẫn xin identity cho an toàn: tránh server nén rồi trình
+    // duyệt tự giải nén, làm content-length không khớp phép đo MAX_PLAYLIST_BYTES ở dưới.
+    headers: new Headers({ 'Accept-Encoding': 'identity' }),
     credentials: 'include',
     cache: 'no-store',
     redirect: 'follow',
@@ -823,6 +826,7 @@ export class HlsJob {
     if (req.gap) return new Uint8Array(0);
 
     const headers = new Headers();
+    headers.set('Accept-Encoding', 'identity');
     if (req.range) headers.set('Range', `bytes=${req.range.start}-${req.range.end}`);
 
     let res: Response;
@@ -847,6 +851,14 @@ export class HlsJob {
       // và refreshPlaylist() có thể cứu được. 404 thì thử lại vô ích.
       const retryable = denied || res.status >= 500 || res.status === 429 || res.status === 408;
       throw new SegmentError(`HTTP ${res.status} ${res.statusText}`, retryable, denied);
+    }
+
+    // Đã xin `Accept-Encoding: identity` mà server vẫn nén thì byte nhận về bị giải nén
+    // sẵn, offset lệch hết so với Range và file ra hỏng. Đừng lặng lẽ ghi rác — báo thẳng.
+    const encoding = res.headers.get('content-encoding');
+    if (encoding && encoding.trim().toLowerCase() !== 'identity') {
+      res.body?.cancel().catch(() => {});
+      throw new SegmentError('Server nén segment, không thể tải theo khoảng byte', false);
     }
 
     // Server phớt lờ header Range là ca hỏng ngầm nguy hiểm nhất của EXT-X-BYTERANGE:

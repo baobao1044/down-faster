@@ -206,12 +206,19 @@ export interface KeyStoreOptions {
 async function defaultFetchKey(uri: string, signal?: AbortSignal): Promise<Uint8Array> {
   const res = await fetch(uri, {
     method: 'GET',
+    // Khóa là 16 byte nhị phân: nếu bị nén rồi trình duyệt tự giải nén thì độ dài sai, nên
+    // xin identity và từ chối thẳng nếu server vẫn nén.
+    headers: new Headers({ 'Accept-Encoding': 'identity' }),
     credentials: 'include',
     cache: 'no-store',
     redirect: 'follow',
     signal: signal ?? null,
   });
   if (!res.ok) throw new KeyFetchError(uri, `Không lấy được khóa: HTTP ${res.status}`);
+  const encoding = res.headers.get('content-encoding');
+  if (encoding && encoding.trim().toLowerCase() !== 'identity') {
+    throw new KeyFetchError(uri, 'Khóa bị nén trên đường truyền, không lấy nguyên vẹn được');
+  }
   return new Uint8Array(await res.arrayBuffer());
 }
 

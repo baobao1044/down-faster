@@ -253,3 +253,92 @@ test('lỗi HTTP được báo ra thay vì nuốt lặng', async () => {
     restore();
   }
 });
+
+/* ---------- Probe: gzip và ranged-GET (lỗi Chrome) ----------
+ *
+ * Chrome ném `TypeError: Failed to fetch` khi một request có `Range` quay về kèm
+ * `content-encoding: gzip` (server phớt lờ Range, trả 200 thay vì 206). Trước đây nhánh
+ * isTransportCompressed() không bao giờ chạy được vì fetch ném trước khi có Response.
+ * Giờ probe phải bắt lỗi đó rồi thử lại bằng plain-GET (không Range); nếu vẫn gzip thì
+ * coi như không chia luồng được và báo size không rõ để engine lui về streaming.
+ *
+ * Các test này dùng `fetchImpl` tiêm qua ProbeOptions thay vì đè globalThis.fetch.
+ */
+
+/** Mô phỏng fetch cho nhiều lần gọi liên tiếp: mỗi phần tử là một Response hoặc một Error. */
+function seqFetch(items: Array<Response | Error>): { fn: typeof fetch; calls: number } {
+  let i = 0;
+  let calls = 0;
+  const fn = (async () => {
+    calls += 1;
+    const item = items[i++];
+    if (item === undefined) {
+      throw new Error(`fetch được gọi lần ${calls} nhưng chỉ khai báo ${items.length} phản hồi`);
+    }
+    if (item instanceof Error) throw item;
+    return item;
+  }) as typeof fetch;
+  return { fn, get calls(): number { return calls; } };
+}
+
+test('ranged-GET ném lỗi (Chrome ném với Range+gzip) thì lui về plain-GET; gzip làm tắt chia luồng, size không rõ', async () => {
+  const stub = seqFetch([
+    new TypeError('Failed to fetch'),
+    fakeResponse({ status: 200, headers: { 'content-encoding': 'gzip', 'content-length': '41007' } }),
+  ]);
+  const info = await probe('https://x.test/f.bin', { fetchImpl: stub.fn });
+  assert.equal(info.acceptRanges, false);
+  assert.equal(info.size, null, 'content-length của gzip là byte đã nén, không phải kích thước file');
+  assert.equal(stub.calls, 2);
+});
+
+test('ranged-GET trả 200 kèm gzip thì cũng lui về plain-GET, cấm chia luồng, size không rõ', async () => {
+  const stub = seqFetch([
+    fakeResponse({ status: 200, headers: { 'content-encoding': 'gzip', 'content-length': '41007' } }),
+    fakeResponse({ status: 200, headers: { 'content-encoding': 'gzip', 'content-length': '41007' } }),
+  ]);
+  const info = await probe('https://x.test/f.bin', { fetchImpl: stub.fn });
+  assert.equal(info.acceptRanges, false);
+  assert.equal(info.size, null);
+  assert.equal(stub.calls, 2);
+});
+
+test('ranged-GET trả 206 thì giữ nguyên, không fallback, chỉ một lần gọi', async () => {
+  const stub = seqFetch([
+    fakeResponse({
+      status: 206,
+      headers: { 'content-range': 'bytes 0-0/10485760', 'content-type': 'application/octet-stream' },
+    }),
+  ]);
+  const info = await probe('https://x.test/f.bin', { fetchImpl: stub.fn });
+  assert.equal(info.acceptRanges, true);
+  assert.equal(info.size, 10485760);
+  assert.equal(stub.calls, 1, '206 đã đủ thông tin, không được gọi fallback');
+});
+
+test('ranged-GET trả 200 không nén thì giữ behavior cũ, không fallback', async () => {
+  const stub = seqFetch([
+    fakeResponse({ status: 200, headers: { 'content-length': '10485760', 'accept-ranges': 'bytes' } }),
+  ]);
+  const info = await probe('https://x.test/f.bin', { fetchImpl: stub.fn });
+  assert.equal(info.acceptRanges, true);
+  assert.equal(info.size, 10485760);
+  assert.equal(stub.calls, 1);
+});
+
+test('cả ranged-GET lẫn plain-GET đều ném lỗi thì probe ném lỗi', async () => {
+  const stub = seqFetch([new TypeError('Failed to fetch'), new TypeError('Failed to fetch')]);
+  await assert.rejects(() => probe('https://x.test/f.bin', { fetchImpl: stub.fn }), /Failed to fetch/);
+  assert.equal(stub.calls, 2);
+});
+
+test('416 vẫn lui về HEAD như cũ, không đụng tới fallback gzip', async () => {
+  const stub = seqFetch([
+    fakeResponse({ status: 416 }),
+    fakeResponse({ status: 200, headers: { 'content-length': '0', 'accept-ranges': 'bytes' } }),
+  ]);
+  const info = await probe('https://x.test/f.bin', { fetchImpl: stub.fn });
+  assert.equal(info.size, 0);
+  assert.equal(info.acceptRanges, false);
+  assert.equal(stub.calls, 2);
+});
