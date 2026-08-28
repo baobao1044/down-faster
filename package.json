@@ -36,16 +36,20 @@
     "build:dev": "node scripts/build.mjs --dev",
     "watch": "node scripts/build.mjs --watch",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.worker.json --noEmit",
+    "typecheck:tests": "tsc -p tsconfig.test.json --noEmit",
     "clean": "rm -rf dist",
     "test": "node scripts/test.mjs",
     "testserver": "node scripts/testserver.mjs",
     "verify": "node scripts/verify.mjs",
     "make-icons": "node scripts/make-icons.mjs",
-    "bench": "node scripts/bench.mjs"
+    "bench": "node scripts/bench.mjs",
+    "e2e": "node scripts/e2e/run.mjs"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.287",
+    "@types/node": "^25.3.2",
     "esbuild": "^0.25.0",
+    "playwright-core": "^1.58.2",
     "typescript": "^5.7.0"
   }
 }
