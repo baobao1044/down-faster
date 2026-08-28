@@ -14,7 +14,7 @@ import { createEngineChannel } from '../shared/engine-channel';
 import { applyI18n, t } from '../shared/i18n';
 import { byId, el, on, setClass, setHidden, setText } from './dom';
 import { initA11y, installRovingList, ProgressAnnouncer, announce } from './a11y';
-import { STATE_LABEL, bytes, eta, speed } from './format';
+import { stateLabel, bytes, eta, speed } from './format';
 
 const listEl = byId('list');
 const urlEl = byId<HTMLTextAreaElement>('url');
@@ -165,7 +165,7 @@ function update(row: Row, task: TaskSnapshot): void {
   // textContent chứ không phải innerHTML: tên file do server đặt, không được tin.
   setText(row.name, task.filename);
   setHidden(row.kindBadge, task.kind !== 'media');
-  setText(row.state, STATE_LABEL[task.state] ?? task.state);
+  setText(row.state, stateLabel(task.state));
   row.state.className = `meta state-${task.state}`;
 
   if (task.size) {

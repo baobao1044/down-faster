@@ -21,6 +21,9 @@
     --danger: #f87171;
     --ok: #4ade80;
   }
+  /* Chữ trắng trên accent sáng #60a5fa chỉ đạt ~2,5:1 trong nền tối, nên đổi sang
+     chữ nền tối: ~6,6:1. `.badge.soft` (nền --border) vốn đủ tương phản, giữ nguyên. */
+  .badge { color: var(--bg); }
 }
 
 * { box-sizing: border-box; }
@@ -62,6 +65,19 @@ button:hover { border-color: var(--accent); }
 button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
 button.link { background: none; border: none; color: var(--accent); padding: 4px; }
 
+/* Vành focus nhất quán cho mọi control, khớp với `.task:focus-visible` và công
+   tắc ở dưới: 2px accent, lùi 2px. Gõ theo type để không đụng ô checkbox ẩn của
+   công tắc (đã có focus riêng qua `.track`). */
+button:focus-visible,
+input[type="url"]:focus-visible,
+input[type="number"]:focus-visible,
+input[type="time"]:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .task {
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -87,7 +103,9 @@ progress::-moz-progress-bar { background: var(--accent); border-radius: 3px; }
 .state-failed { color: var(--danger); }
 .state-completed { color: var(--ok); }
 .error { color: var(--danger); font-size: 12px; margin-top: 4px; overflow-wrap: anywhere; }
-.empty { color: var(--muted); padding: 24px 0; text-align: center; }
+/* padding dày hơn để chữ rỗng không bị kẹt vào thanh nhập (popup) hay mép
+   danh sách (trang quản lý) khi không có lượt tải nào. */
+.empty { color: var(--muted); padding: 32px 12px; text-align: center; }
 
 .popup { width: 340px; padding: 12px; }
 .popup h1 { font-size: 15px; }
