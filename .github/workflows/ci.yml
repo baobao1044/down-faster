@@ -38,7 +38,7 @@ jobs:
 
     steps:
       - name: Lấy mã nguồn
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Cài Node ${{ matrix.node }}
         uses: actions/setup-node@v4
@@ -116,7 +116,7 @@ jobs:
 
     steps:
       - name: Lấy mã nguồn
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Cài Node
         uses: actions/setup-node@v4
