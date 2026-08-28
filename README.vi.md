@@ -5,7 +5,7 @@
 Một extension tải file bằng nhiều request HTTP `Range` song song thay vì một. Chromium
 và Firefox, Manifest V3, chung một code base, không cần binary ngoài, không cần app đi kèm.
 
-[![CI](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml)
+[![CI](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/baobao1044/down-faster/blob/main/LICENSE) [![Tests](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/baobao1044/down-faster/blob/main/CONTRIBUTING.md)
 
 `giấy phép: MIT` · `trạng thái: alpha — đường lõi đã chạy trong Chromium thật` · `401 test xanh`
 
