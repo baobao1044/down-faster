@@ -1,11 +1,13 @@
 {
+  "author": "BaoBG",
+  "homepage_url": "https://github.com/baobao1044/down-faster",
   "background": {
     "scripts": ["background.js"],
     "type": "module"
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "down-faster@local.dev",
+      "id": "down-faster@baobao1044.github.io",
       "strict_min_version": "128.0"
     }
   }

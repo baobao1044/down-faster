@@ -1,0 +1,11 @@
+Down Faster speeds up downloads by using multiple parallel HTTP Range requests instead of a single connection. Works on Chromium and Firefox, right inside the browser — no external app needed.
+
+Key features:
+- Up to 8 parallel connections per file
+- OPFS-backed writing (no RAM bloat)
+- Adaptive connection count (AIMD)
+- Pause, resume, retry, cancel
+- Queue management with priority
+- Speed limit and schedule windows
+- HLS video download support
+- Full keyboard accessibility

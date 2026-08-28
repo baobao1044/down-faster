@@ -7,11 +7,11 @@ và Firefox, Manifest V3, chung một code base, không cần binary ngoài, kh�
 
 [![CI](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/baobao1044/down-faster/blob/main/LICENSE) [![Tests](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/baobao1044/down-faster/blob/main/CONTRIBUTING.md)
 
-`giấy phép: MIT` · `trạng thái: alpha — đường lõi đã chạy trong Chromium thật` · `401 test xanh`
+`giấy phép: MIT` · `trạng thái: alpha — đường lõi đã chạy trong Chromium thật` · `420 test xanh`
 
 *Huy hiệu này có thật, và nó hẹp. Ngay ở commit đầu tiên, GitHub Actions đã chạy bộ test
 trên một lần `npm ci` sạch với cả Node 20 lẫn Node 22, cả hai nhánh đều xanh — nên con số
-401 không còn chỉ là lời của tác giả nữa. Nhưng thứ huy hiệu KHÔNG bao gồm lại đúng là
+420 không còn chỉ là lời của tác giả nữa. Nhưng thứ huy hiệu KHÔNG bao gồm lại đúng là
 thứ quan trọng nhất: Actions chạy Linux không màn hình, không có browser nào. Nó kiểm đúng phần logic thuần và không chạm được vào một đường phụ thuộc
 trình duyệt nào. Dấu tick xanh ở đây nghĩa là code biên dịch được và test đơn vị qua.
 Nó KHÔNG phải bằng chứng rằng extension chạy được.*
@@ -221,7 +221,7 @@ npm run build:dev          # cùng hai target, nhưng giữ log [df:…] và sou
 npm run build:chromium     # hoặc chỉ một target
 npm run build:firefox
 npm run watch              # build lại khi sửa file; ngầm bật --dev
-npm test                   # 401 test
+npm test                   # 420 test
 npm run typecheck          # tsconfig.json và tsconfig.worker.json
 npm run testserver         # http://localhost:8787
 npm run bench              # cần testserver chạy trước ở cửa sổ khác
@@ -292,11 +292,11 @@ vòng lặp tự giành lại chính lượt tải nó vừa buông ra (có test
 ### Test tự động
 
 ```bash
-npm test         # 401 test, chạy trong khoảng một giây
+npm test         # 420 test, chạy trong khoảng một giây
 npm run typecheck
 ```
 
-401 test, 0 fail, 0 skip, 0 todo. Phân rã theo file:
+420 test, 0 fail, 0 skip, 0 todo. Phân rã theo file:
 
 | File | Số test | Phủ cái gì |
 |---|---|---|
@@ -600,7 +600,7 @@ logic, bơm cổng giả vào là test được, và chúng đang là khoảng t
 | | |
 |---|---|
 | TypeScript trong `src/` | 13.393 dòng, 40 file |
-| Test | 5.467 dòng, 8 file, 401 ca, chạy bằng `node:test`, không phụ thuộc framework nào |
+| Test | 5.467 dòng, 8 file, 420 ca, chạy bằng `node:test`, không phụ thuộc framework nào |
 | Phụ thuộc lúc chạy | không có |
 | Phụ thuộc lúc build | esbuild, typescript, `@types/chrome` |
 | Bản địa hóa | 141 khóa, tiếng Việt và tiếng Anh; mỗi khóa tiếng Việt đều có description cho người dịch, có test bắt buộc |
