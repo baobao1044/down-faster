@@ -4,7 +4,9 @@ A browser extension that downloads a file over several parallel HTTP range reque
 instead of one. Chromium and Firefox, Manifest V3, one code base, no external binary,
 no companion app.
 
-[![CI](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/baobao1044/down-faster/blob/main/LICENSE) [![Tests](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/baobao1044/down-faster/blob/main/CONTRIBUTING.md)
+[![CI](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/baobao1044/down-faster/blob/main/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/baobao1044/down-faster/blob/main/CONTRIBUTING.md)
+
+<img src="docs/assets/og-cover.png" alt="Down Faster" width="100%">
 
 `license: MIT` · `status: alpha — core path verified in a real browser` · `420 tests passing`
 
@@ -55,6 +57,10 @@ A browser downloads a file over one HTTP connection. Many servers cap throughput
 *per connection* rather than per client. When that is the case, opening eight
 connections and asking each for a different byte range with a `Range` header finishes
 the same file several times faster.
+
+![Manager page while downloading — the progress bar, speed, ETA, and live connection count](docs/assets/demo.gif)
+
+*The manager page during a download: progress, speed, ETA, and the live connection count.*
 
 That is the whole trick, and it is old. The interesting part is that Manifest V3 makes
 it awkward to implement inside an extension, and most of this code base exists to get
@@ -236,8 +242,10 @@ does not — and again, **none of it has run in a browser.**
   split a gzipped response
 - The storage capability gate: `requireStorage()` refuses the download when OPFS or
   `createSyncAccessHandle` is missing, and probes once per session rather than once per
-  download (four tests). Its other half, `detectCapabilities()`, is the part that asks a
-  real browser, so it has no test and cannot get one here
+  download (four tests). Its other half, `detectCapabilities()`, is tested the same way
+  with an injected fake storage (four tests), including the main-thread vs worker
+  distinction the capability-probe fix rests on — only the real `navigator.storage`
+  call has never run here
 - AIMD concurrency: backs off on 429/503, honours `Retry-After`, coalesces penalties
 - Filename handling: RFC 5987, Windows-illegal characters, no directory escape
 - Header replay tiers and `declarativeNetRequest` rule construction — rules are built
@@ -264,19 +272,22 @@ does not — and again, **none of it has run in a browser.**
 | `test/control.test.ts` | 59 | throttle, queue, schedule |
 | `test/persistence.test.ts` | 59 | checkpoints, recovery |
 | `test/i18n.test.ts` | 49 | messages, accessibility |
-| `test/engine.test.ts` | 22 | pieces, filenames, probe |
-| `test/integration.test.ts` | 20 | 16 pure functions, 4 on `requireStorage()`; not integration, despite the name |
+| `test/engine.test.ts` | 28 | pieces, filenames, probe |
+| `test/integration.test.ts` | 24 | 20 pure functions, 4 on `requireStorage()`, 4 on `detectCapabilities()`; not integration, despite the name |
 | `test/policy.test.ts` | 16 | auto-mode take / hand-back |
+| `test/format.test.ts` | 10 | UI formatters — bytes, speed, ETA, state labels |
+| `test/messaging.test.ts` | 3 | engine-channel startup race: queue while the offscreen listener is pending |
 
 ### Implemented, no tests at all
 
-15 of the 40 files in `src/` — 3,154 lines — are touched by no test at all, not even
-indirectly: the background page (469), the engine manager (614), the entire UI (manager,
-popup, welcome, DOM and format helpers, 1,053), the content script (270), both workers
-(346), the offscreen host and the `HostBridge` stub (113), the RPC plumbing (211), and
-the capability probe (78). One partial exception inside that list: `requireStorage()` in
-`platform/capabilities.ts` has four tests, but `detectCapabilities()` — the half that
-actually asks the browser what it supports — has none, and cannot be tested here.
+12 of the 41 files in `src/` — 2,820 lines — are touched by no test at all, not even
+indirectly: the background page (472), the engine manager (614), three of the five UI
+files (manager, popup and welcome — 794; the format and DOM helpers now run under
+`format.test.ts` and `i18n.test.ts`), the content script (270), both workers (346), the
+offscreen host and the `HostBridge` stub (113), and the RPC plumbing (211). The
+capability probe dropped out of this list: `requireStorage()` has four tests, and
+`detectCapabilities()` has four of its own that drive it with an injected fake storage —
+only the real `navigator.storage` call is still browser-only.
 
 An earlier version of this section said *18 files, 3,288 lines, imported by no test*.
 That was a count of **direct** imports, and "imported by no test" reads as "no test
@@ -327,6 +338,14 @@ Load it:
 
 If you do this, you are the first person to. Bug reports from an actual browser are the
 single most useful thing this project can receive.
+
+![First-run welcome page](docs/assets/welcome.png)
+
+*First run.*
+
+![Toolbar popup with a live download task](docs/assets/popup.png)
+
+*The toolbar popup shows the live task with its connection count.*
 
 **Build with `npm run build:dev` if you want to see what it is doing.** The default
 `npm run build` sets `__DEV__=false`, and esbuild then deletes every `console.log` from
@@ -405,6 +424,14 @@ anywhere. Logs live in `chrome://extensions` → *Details* → *Inspect views* �
 
 </details>
 
+![Manager page with a download in progress](docs/assets/manager-active.png)
+
+*A download in progress — 8 parallel connections, speed and ETA.*
+
+![Manager page, Settings tab](docs/assets/manager-settings.png)
+
+*Settings — adaptive connections, speed limit, schedule windows.*
+
 ## Limitations
 
 **Multiple connections only help when the server throttles per connection.** If your own
@@ -416,7 +443,7 @@ known bug (`/gzip`) is tracked. The tested pieces are tested well; the code that
 them into a download has no dedicated tests but is no longer unobserved: it has run.
 
 **Type checking does not cover the tests.** Both tsconfigs include only `src/**`, so the
-5,467 lines in `test/` plus the 163 lines of `bench/bench.ts` — 5,630 lines in total —
+5,966 lines in `test/` plus the 163 lines of `bench/bench.ts` — 6,129 lines in total —
 have never been type-checked; esbuild strips types without checking them.
 
 **HLS is concatenation, not remuxing.** Streams that keep audio in a separate track
@@ -526,7 +553,7 @@ it. PRIVACY.md goes through it permission by permission.
 | | |
 |---|---|
 | TypeScript in `src/` | 13,393 lines across 40 files |
-| Tests | 5,467 lines, 8 files, 420 cases, `node:test`, no test framework dependency |
+| Tests | 5,966 lines, 10 files, 420 cases, `node:test`, no test framework dependency |
 | Runtime dependencies | none |
 | Build dependencies | esbuild, typescript, `@types/chrome` |
 | Localisation | 141 keys, Vietnamese and English, every Vietnamese key carries a translator description (enforced by a test) |
@@ -539,6 +566,9 @@ it. PRIVACY.md goes through it permission by permission.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — how to build, test, and where help is most needed
 - [SECURITY.md](SECURITY.md) — reporting a vulnerability
 - [PRIVACY.md](PRIVACY.md) — what the extension does and does not collect
+- [docs/ROADMAP.md](docs/ROADMAP.md) — feature backlog
+- [docs/DESIGN.md](docs/DESIGN.md) — design system
+- [docs/SUPERPLAN.md](docs/SUPERPLAN.md) — production plan
 - [README.vi.md](README.vi.md) — bản tiếng Việt
 
 ## License

@@ -417,7 +417,7 @@ This is where the honest boundary sits, and it matters more than anything above.
 **The extension has never been run in a browser.** No Chrome, no Firefox, not once. The
 development machine has no browser installed. Everything in this document is a claim
 about source code and build output — both of which you can inspect and verify — not
-about observed behaviour. The 397 automated tests (`npm test`) run under `node:test` and
+about observed behaviour. The 420 automated tests (`npm test`) run under `node:test` and
 cover pure logic; they cannot exercise OPFS, Web Workers, the offscreen document,
 `chrome.alarms`, `chrome.downloads`, or declarativeNetRequest, because none of those
 exist outside a browser.
@@ -435,7 +435,7 @@ and not by watching a real browser:
   logic is unit-tested against a fake store, not against a real `storage.local`.
 
 Also worth knowing about the code behind these claims, measured with esbuild's metafile
-rather than estimated: of the 40 TypeScript files in `src/`, **15 — 3,154 lines — are
+rather than estimated: of the 41 TypeScript files in `src/`, **12 — 2,820 lines — are
 reached by no test at all, not even indirectly**. `src/engine/manager.ts` (614 lines) is
 one of them, and it is the file that owns `armRules()`, `disarmRules()` and two
 `storage.removePart()` calls. Two more files are weaker than a file-level count suggests:

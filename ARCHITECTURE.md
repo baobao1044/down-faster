@@ -11,7 +11,7 @@ been proven yet.
 
 **Status, stated up front, because it changes how you should read everything below.**
 The code has never run inside a real browser. Not once. There is no browser on the
-development machine. 397 unit tests pass, both TypeScript projects typecheck clean, and
+development machine. 420 unit tests pass, both TypeScript projects typecheck clean, and
 both targets build — but every path that touches OPFS, `Worker`, the offscreen document,
 `chrome.alarms`, `declarativeNetRequest`, `chrome.downloads`, or the content script is
 correct on paper and in unit tests only. Section 12 maps exactly what is covered and what
@@ -244,8 +244,9 @@ exactly the pattern a file system dislikes. This is not an exotic branch: OPFS i
 the private-browsing mode of some browsers, and `createSyncAccessHandle` exists only inside
 workers. Four tests in `test/integration.test.ts` cover the gate — missing OPFS, missing sync
 handle, the passing case, and the once-per-session memoisation — by injecting a fake
-detector. `detectCapabilities()` itself, the half that actually touches `navigator.storage`,
-has still never run.
+detector. Four more tests drive `detectCapabilities()` with an injected fake storage,
+including the main-thread vs worker split behind the capability-probe fix. Only the
+real `navigator.storage` call itself has still never run.
 
 The HLS path reuses the same worker and the same `WriteRequest`/`WriteAck` protocol through
 `OrderedSink` in `src/engine/hls/assemble.ts`, which additionally enforces segment ordering
@@ -583,7 +584,7 @@ is a design intent read off the code, not a behaviour a test holds in place.
 
 ## 12. What the tests actually prove
 
-397 tests, `node:test`, in about a second. Reproduce with `npm test`.
+420 tests, `node:test`, in about a second. Reproduce with `npm test`.
 
 | File | Tests | Covers |
 |------|-------|--------|
@@ -592,9 +593,11 @@ is a design intent read off the code, not a behaviour a test holds in place.
 | `test/control.test.ts` | 59 | Token bucket, two workers sharing round-robin, `setRate` mid-flight, `dispose()` releasing waiters; queue concurrency cap, priority, `moveToFront`, pause holding its slot; schedule windows across midnight, absolute-`when` alarms |
 | `test/persistence.test.ts` | 59 | Record encode/decode, checkpoint ordering, recovery decisions |
 | `test/i18n.test.ts` | 49 | Message table, locale override, screen-reader helpers in `src/ui/a11y.ts` |
-| `test/engine.test.ts` | 22 | `planPieces`, filename resolution (RFC 5987, Windows-illegal names, no directory escape), probe behaviour on 206/200/gzip |
-| `test/integration.test.ts` | 20 | `DEFAULT_SETTINGS` -> `toDownloadOptions`, `failureKind`, `compareFingerprints`, four tests locking `paceOptionsFor`, and four driving `requireStorage()` with an injected probe |
+| `test/engine.test.ts` | 28 | `planPieces`, filename resolution (RFC 5987, Windows-illegal names, no directory escape), probe behaviour on 206/200/gzip, redirect final-URL reuse, and the plain-GET fallback when ranged GET fails |
+| `test/integration.test.ts` | 24 | `DEFAULT_SETTINGS` -> `toDownloadOptions`, `failureKind`, `compareFingerprints`, four tests locking `paceOptionsFor`, four driving `requireStorage()` with an injected probe, and four driving `detectCapabilities()` with an injected fake storage |
 | `test/policy.test.ts` | 16 | Auto-mode interception rules — 16 tests for 65 lines, the densest file in the repo |
+| `test/format.test.ts` | 10 | UI formatters — `bytes`, `speed`, `eta`, `stateLabel`, and the unit/duration keys from the message table |
+| `test/messaging.test.ts` | 3 | engine-channel startup race — commands queued while the offscreen listener is pending, released FIFO on a successful ping, dropped with a warning on timeout |
 
 Three details are worth pointing out. `test/hls.test.ts` builds its AES-128 fixtures with
 Node's real `crypto.subtle.encrypt` and makes the engine decrypt them, rather than mocking
@@ -607,22 +610,21 @@ hide.
 
 Cross-referencing every test import against `find src -name '*.ts'`:
 
-**15 of 40 source files (3,154 lines) are touched by no test at all, not even
+**12 of 41 source files (2,820 lines) are touched by no test at all, not even
 indirectly.**
 
 ```
-src/engine/manager.ts             614     src/shared/rpc.ts                142
-src/ui/manager.ts                 544     src/engine/workers/writer-worker.ts  82
-src/background/index.ts           469     src/offscreen/offscreen.ts        80
-src/content/media-detect.ts       270     src/platform/capabilities.ts      78
-src/engine/workers/fetch-worker.ts 264    src/shared/protocol.ts            69
-src/ui/dom.ts                     227     src/ui/format.ts                  38
-src/ui/popup.ts                   223     src/engine/host.ts                33
-                                          src/ui/welcome.ts                 21
+src/engine/manager.ts               614     src/shared/rpc.ts              142
+src/ui/manager.ts                   547     src/engine/workers/writer-worker.ts  82
+src/background/index.ts             472     src/offscreen/offscreen.ts      80
+src/content/media-detect.ts         270     src/shared/protocol.ts          69
+src/engine/workers/fetch-worker.ts  264     src/engine/host.ts              33
+src/ui/popup.ts                     226     src/ui/welcome.ts               21
 ```
 
 That is precisely the glue layer: HostBridge, offscreen, both workers, the content
-script, and the whole UI.
+script, and three of the five UI files (manager, popup, welcome) — the format and DOM
+helpers now run under `format.test.ts` and `i18n.test.ts` (via `ui/a11y.ts`).
 
 Reachability here comes from esbuild's metafile for the test bundle, so a file counts as
 covered even when no test names it in an import. An earlier revision of this section said
@@ -631,10 +633,11 @@ covered even when no test names it in an import. An earlier revision of this sec
 for `src/engine/storage.ts` (88), `src/platform/api.ts` (67) and `src/shared/log.ts` (17):
 all three are pulled in transitively and do execute during `npm test`.
 
-`src/platform/capabilities.ts` is the one partial case. Four tests in
-`test/integration.test.ts` now cover `requireStorage()`, the gate `DownloadJob.openWriter()`
-calls before it builds the writer. `detectCapabilities()` — the half that actually asks
-`navigator.storage` — is still untested and cannot be tested outside a browser.
+`src/platform/capabilities.ts` no longer belongs in that list at all. Four tests in
+`test/integration.test.ts` cover `requireStorage()`, the gate `DownloadJob.openWriter()`
+calls before it builds the writer, and four more drive `detectCapabilities()` with an
+injected fake storage — main thread vs worker, the split behind the capability-probe
+fix. Only the real `navigator.storage` call is still browser-only.
 
 **Worse, the two largest classes in the project live in files that *are* imported by tests,
 but are themselves untested.** `DownloadJob` spans `orchestrator.ts:153-967` (815 lines) and
@@ -648,16 +651,17 @@ That is **4,543 lines, about 34% of `src/`, with no test.** The honest summary i
 *pieces* are tested carefully, and the thing that *assembles* the pieces into an actual
 download is neither tested nor ever executed.
 
-Note also that `test/integration.test.ts` is misnamed. Sixteen of its 20 tests are
-assertions on pure functions; the other four drive `requireStorage()` with an injected
-probe. Nothing is wired to a browser, a worker or a real file. Do not read the filename as
-evidence that integration tests exist.
+Note also that `test/integration.test.ts` is misnamed. Twenty of its 24 tests are
+assertions on pure functions; four drive `requireStorage()` with an injected probe, and
+four drive `detectCapabilities()` with an injected fake storage. Nothing is wired to a
+browser, a worker or a real file. Do not read the filename as evidence that integration
+tests exist.
 
 **Typecheck scope.** `npm run typecheck` runs two projects and both pass, but `tsconfig.json`
 includes only `src/**/*.ts` (excluding workers) and `tsconfig.worker.json` includes only the
 workers plus three shared files. Neither includes `test/` or `bench/`, and `scripts/test.mjs`
-uses esbuild, which strips types without checking them. So 5,467 lines of test code and 163
-lines of bench code — 5,630 lines in total — have never been typechecked. The base config is `strict` with
+uses esbuild, which strips types without checking them. So 5,966 lines of test code and 163
+lines of bench code — 6,129 lines in total — have never been typechecked. The base config is `strict` with
 `noUncheckedIndexedAccess`, but also `skipLibCheck: true` and
 `exactOptionalPropertyTypes: false` — good, not maximal.
 
@@ -822,7 +826,7 @@ src/
   shared/                  protocol (worker msgs), rpc (host msgs), settings, i18n, log
 manifest/                  base.json + chromium.json + firefox.json overlays
 scripts/                   build, test, bench, testserver, verify, make-icons
-test/                      8 files, 397 tests
+test/                      10 files, 420 tests
 bench/bench.ts             Uses the real planner and controller
 _locales/{vi,en}/          141 keys each; all 141 Vietnamese keys carry a description
 ```
@@ -837,7 +841,7 @@ npm run build:dev          # the same two targets, keeping [df:...] logging and 
 npm run build:chromium
 npm run build:firefox
 npm run watch              # implies --dev
-npm test                   # 397 tests
+npm test                   # 420 tests
 npm run typecheck          # both tsconfigs
 npm run testserver         # http://localhost:8787
 npm run bench              # needs testserver running in another terminal
@@ -853,7 +857,7 @@ condition multi-connection downloading is designed for. `/stats` returns
 
 ## 16. If you want to contribute
 
-The most valuable work is not new features. It is closing the gap between "passes 397 unit
+The most valuable work is not new features. It is closing the gap between "passes 420 unit
 tests" and "known to work".
 
 Ranked by how much they would improve confidence:
@@ -866,7 +870,7 @@ Ranked by how much they would improve confidence:
    untested is not that it needs a browser; `test/persistence.test.ts` already demonstrates
    the fake-port style this would use. This is the single largest confidence win available.
 3. **Test `HlsJob`** (~574 lines) for the same reason.
-4. **Extend typecheck to `test/` and `bench/`.** 5,630 lines currently type-unchecked.
+4. **Extend typecheck to `test/` and `bench/`.** 6,129 lines currently type-unchecked.
 5. **Make the Chromium service worker stop bundling the engine.** A dynamic `import()`
    behind the `isFirefox` branch in `background/index.ts`; measurable before and after with
    `ls -l dist/chromium/background.js`.
@@ -879,7 +883,7 @@ Conventions that are load-bearing rather than stylistic:
 - **Comments explain why, not what.** Most non-obvious lines in this codebase carry a note
   about the failure they prevent. Keep that up; those notes are the actual documentation.
 - **Pure logic stays pure.** Injected clocks, injected ports, no direct browser API calls
-  outside `background/` and `platform/`. This is why 397 tests can run in under a second
+  outside `background/` and `platform/`. This is why 420 tests can run in under a second
   with no network.
 - **`src/engine/persistence.ts` must never import `platform/api`.** It would work on Firefox
   and fail silently on Chromium.

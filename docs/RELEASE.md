@@ -16,8 +16,8 @@ Bước cuối cùng để đăng Down Faster lên Chrome Web Store và Firefox 
    - Mô tả: từ `store/en/description.txt` (hoặc `store/vi/` cho tiếng Việt).
    - Danh mục: Productivity.
    - Quyền riêng tư: dán URL `https://github.com/baobao1044/down-faster/blob/main/PRIVACY.md`.
-   - Screenshots: cần ít nhất 1 (1280×800 hoặc 640×400). Chưa có — cần chụp thủ công.
-   - Promo tile (440×280): tùy chọn, chưa có.
+   - Screenshots: sẵn có trong `store/screenshots/` — `01-manager.png` và `02-welcome.png`, cả hai 1280×800 (đúng chuẩn CWS) — chỉ việc upload.
+   - Promo tile (440×280): `store/promo/01-promo.png`, đúng kích thước — tùy chọn, chỉ việc upload.
 4. Submit for review.
 
 ## Firefox Add-ons (AMO)
@@ -33,4 +33,4 @@ Bước cuối cùng để đăng Down Faster lên Chrome Web Store và Firefox 
 - 21 mục checklist còn mục thủ công chưa đo (6–7, 11, 13–21).
 - Con số 4,0×/8,0× là từ bench local (Node), không phải đo end-to-end trong browser.
 - Extension chưa có ai ngoài tác giả dùng thử.
-- Chưa có screenshot cho store — cần chụp thủ công.
+- Screenshot cho store đã sẵn có trong `store/screenshots/` (2 ảnh 1280×800, chuẩn CWS) và promo tile trong `store/promo/` (440×280) — chỉ việc upload.

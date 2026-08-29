@@ -44,7 +44,7 @@ These claims were re-run while writing this document, and you can re-run them yo
 
 | Claim | How to check |
 |---|---|
-| 397 tests pass, 0 fail, 0 skip, in about a second | `npm test` |
+| 420 tests pass, 0 fail, 0 skip, in about a second | `npm test` |
 | Type checking is clean on both tsconfigs | `npm run typecheck` |
 | Both targets build | `npm run build` |
 | 141 i18n keys in `vi` and `en`; all 141 `vi` keys have a `description` | `npm test` |
@@ -180,7 +180,7 @@ src/
   ui/                     popup, manager page, welcome page, a11y, formatting
   content/media-detect.ts Content script that spots media URLs in a page
 
-test/                     8 files, 397 tests, node:test
+test/                     10 files, 420 tests, node:test
 bench/bench.ts            Throughput benchmark, imports the real engine functions
 scripts/                  build.mjs, test.mjs, bench.mjs, testserver.mjs,
                           verify.mjs, make-icons.mjs
@@ -188,7 +188,7 @@ manifest/                 base.json plus a chromium.json and firefox.json overla
 _locales/                 vi (default) and en
 ```
 
-Roughly 13,393 lines of TypeScript in `src/` across 40 files, and 5,467 lines in `test/`.
+Roughly 13,393 lines of TypeScript in `src/` across 40 files, and 5,966 lines in `test/`.
 
 ### Architecture in one paragraph
 
@@ -479,21 +479,19 @@ around 90 characters.
 
 ## Where the tests are not
 
-397 passing tests do not mean a working download, and the project would rather say so
+420 passing tests do not mean a working download, and the project would rather say so
 than let you find out the hard way.
 
-**15 of the 40 files in `src/` — 3,154 lines — are not touched by any test at all, not
+**12 of the 41 files in `src/` — 2,820 lines — are not touched by any test at all, not
 even indirectly through another module's imports:**
 
 ```
 src/engine/manager.ts                 src/engine/workers/writer-worker.ts
 src/ui/manager.ts                     src/offscreen/offscreen.ts
 src/background/index.ts               src/shared/protocol.ts
-src/content/media-detect.ts           src/platform/capabilities.ts  (see below)
-src/engine/workers/fetch-worker.ts    src/ui/format.ts
-src/ui/dom.ts                         src/engine/host.ts
-src/ui/popup.ts                       src/ui/welcome.ts
-src/shared/rpc.ts
+src/content/media-detect.ts           src/engine/host.ts
+src/engine/workers/fetch-worker.ts    src/ui/welcome.ts
+src/ui/popup.ts                       src/shared/rpc.ts
 ```
 
 Reachability here comes from esbuild's metafile for the test bundle, so a file counts as
@@ -504,12 +502,14 @@ worded as though it meant "no test ever runs this code", which was wrong for
 pulled in transitively and do execute during `npm test`. Not tested in its own right and
 never executed are different claims; this list is the second one.
 
-`src/platform/capabilities.ts` is the one partial case, and it is worth stating precisely.
-Four tests in `test/integration.test.ts` now cover `requireStorage()`, the gate
+`src/platform/capabilities.ts` no longer belongs in that list, and it is worth stating
+precisely. Four tests in `test/integration.test.ts` cover `requireStorage()`, the gate
 `DownloadJob.openWriter()` calls before it commits to a write strategy — missing OPFS or a
 missing `createSyncAccessHandle` fails fast there instead of halfway through a download.
-`detectCapabilities()`, the function that does the actual probing, has still never been
-executed by a test and cannot be until someone runs it in a browser.
+Four more drive `detectCapabilities()`, the function that does the actual probing, with
+an injected fake storage — including the main-thread vs worker split behind the
+capability-probe fix. Only the real `navigator.storage` call remains untested until
+someone runs it in a browser.
 
 **Worse, the two largest classes in the project sit inside files that *are* imported by
 tests, yet are themselves untested:**
@@ -525,13 +525,13 @@ tested thoroughly; the thing that joins them into an actual download is not.**
 
 Two more things worth knowing:
 
-- `test/integration.test.ts` is misleadingly named. Sixteen of its 20 tests are assertions
-  on pure functions; the other four drive `requireStorage()` with an injected probe.
-  Nothing is wired to a browser, a worker or a real file. Do not cite it as evidence of
-  integration coverage.
+- `test/integration.test.ts` is misleadingly named. Twenty of its 24 tests are assertions
+  on pure functions; four drive `requireStorage()` with an injected probe, and four drive
+  `detectCapabilities()` with an injected fake storage. Nothing is wired to a browser, a
+  worker or a real file. Do not cite it as evidence of integration coverage.
 - Neither tsconfig includes `test/` or `bench/`, and `scripts/test.mjs` uses esbuild,
-  which strips types without checking them. So those 5,467 lines of test code, plus the
-  163 lines of `bench/bench.ts` — 5,630 lines in total — have never been type-checked.
+  which strips types without checking them. So those 5,966 lines of test code, plus the
+  163 lines of `bench/bench.ts` — 6,129 lines in total — have never been type-checked.
 
 `DownloadJob` and `HlsJob` are the important detail here, and the honest version is that
 they are **partly reachable today**. `DownloadJob` already takes a `JobDeps` seam for the
@@ -554,8 +554,8 @@ Ranked by usefulness to the project, not by difficulty:
    need stubs. Start with the hand-back paths, since those are where a bug costs a user
    their file.
 3. **Test `HlsJob`** the same way.
-4. **Test the glue**: `src/shared/rpc.ts`, `src/engine/host.ts` consumers,
-   `src/ui/format.ts`. Small files, quick wins, real coverage.
+4. **Test the glue**: `src/shared/rpc.ts`, `src/engine/host.ts` consumers.
+   Small files, quick wins, real coverage.
 5. **Add `test/` and `bench/` to a tsconfig** so that test code is type-checked too.
 6. **Fix the two broken manual checks** described below.
 

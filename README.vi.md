@@ -5,7 +5,9 @@
 Một extension tải file bằng nhiều request HTTP `Range` song song thay vì một. Chromium
 và Firefox, Manifest V3, chung một code base, không cần binary ngoài, không cần app đi kèm.
 
-[![CI](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/baobao1044/down-faster/blob/main/LICENSE) [![Tests](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/baobao1044/down-faster/blob/main/CONTRIBUTING.md)
+[![CI](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml/badge.svg)](https://github.com/baobao1044/down-faster/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/baobao1044/down-faster/blob/main/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/baobao1044/down-faster/blob/main/CONTRIBUTING.md)
+
+<img src="docs/assets/og-cover.png" alt="Down Faster" width="100%">
 
 `giấy phép: MIT` · `trạng thái: alpha — đường lõi đã chạy trong Chromium thật` · `420 test xanh`
 
@@ -60,6 +62,10 @@ ràng buộc đó chứ không phải để tải file.
 
 Tăng tốc đến từ việc mở nhiều kết nối HTTP song song, mỗi kết nối xin một khoảng byte
 khác nhau bằng header `Range`, rồi ghi thẳng vào cùng một file trên đĩa.
+
+![Trang quản lý trong lúc tải — thanh tiến độ, tốc độ, thời gian còn lại, số kết nối](docs/assets/demo.gif)
+
+*Trang quản lý trong lúc tải: tiến độ, tốc độ, thời gian còn lại, số kết nối.*
 
 ```
 [ Content script ]  dò video trong trang
@@ -237,6 +243,14 @@ Nạp vào trình duyệt:
 - **Firefox**: `about:debugging#/runtime/this-firefox` → *Load Temporary Add-on* → chọn
   `dist/firefox/manifest.json`
 
+![Trang chào lần chạy đầu tiên](docs/assets/welcome.png)
+
+*Lần chạy đầu tiên.*
+
+![Popup trên thanh công cụ với một lượt tải đang chạy](docs/assets/popup.png)
+
+*Popup trên thanh công cụ — lượt tải đang chạy kèm số kết nối.*
+
 Chỗ xem log khi thử:
 
 - **Chromium**: `chrome://extensions` → *Details* → *Inspect views* → chọn
@@ -252,6 +266,14 @@ không còn dòng console nào. Và **đừng đi tìm `console.error`**: `error
 `src/shared/log.ts:15` nhưng không nơi nào trong `src/` gọi nó, nên không bundle nào phát
 ra một dòng đỏ nào cả. `npm run build:dev` (và `npm run watch`, vốn ngầm `--dev`) giữ lại
 các dòng `[df:…]` kèm sourcemap inline.
+
+![Trang quản lý với một lượt tải đang chạy](docs/assets/manager-active.png)
+
+*Lượt tải đang chạy — 8 kết nối song song, tốc độ và thời gian còn lại.*
+
+![Trang quản lý, tab Cài đặt](docs/assets/manager-settings.png)
+
+*Cài đặt — kết nối thích nghi, giới hạn tốc độ, khung giờ tải.*
 
 ## Chế độ tự động
 
@@ -305,9 +327,11 @@ npm run typecheck
 | `test/control.test.ts` | 59 | xô token, hai worker chia luân phiên, đổi tốc độ giữa chừng, trần đồng thời, ưu tiên, `moveToFront`, khung giờ vắt qua nửa đêm |
 | `test/persistence.test.ts` | 59 | chốt sổ tiến độ, khôi phục sau khởi động lại |
 | `test/i18n.test.ts` | 49 | i18n và thông báo cho trình đọc màn hình |
-| `test/engine.test.ts` | 22 | chia piece, đặt tên file (RFC 5987, tên Windows, không thoát thư mục), thăm dò server |
+| `test/engine.test.ts` | 28 | chia piece, đặt tên file (RFC 5987, tên Windows, không thoát thư mục), thăm dò server (kể cả fallback gzip) |
 | `test/policy.test.ts` | 16 | chế độ tự động |
-| `test/integration.test.ts` | 20 | cài đặt tới engine, phân loại lỗi, `paceOptionsFor`, chốt chặn `requireStorage()` |
+| `test/integration.test.ts` | 24 | cài đặt tới engine, phân loại lỗi, `paceOptionsFor`, chốt chặn `requireStorage()`, dò khả năng theo ngữ cảnh |
+| `test/format.test.ts` | 10 | định dạng UI — bytes, tốc độ, ETA, nhãn trạng thái |
+| `test/messaging.test.ts` | 3 | race khởi động engine-channel: xếp hàng lệnh khi listener offscreen chưa sẵn sàng |
 
 Vài chỗ đáng nói vì chúng khóa lại đúng loại lỗi khó thấy:
 
@@ -318,22 +342,24 @@ Vài chỗ đáng nói vì chúng khóa lại đúng loại lỗi khó thấy:
 - `planReplay` không bao giờ gửi bí mật sang origin khác.
 - Không đọc được thư mục `parts` thì giữ nguyên mọi thứ, tuyệt đối không dọn.
 
-Cảnh báo về tên file: `integration.test.ts` **không** phải test tích hợp. Mười sáu trong
-số 20 test bên trong là khẳng định về hàm thuần; bốn test còn lại lái `requireStorage()`
-bằng một bộ dò tiêm vào. Không có gì được ghép với trình duyệt, với worker hay với file
-thật. Cái tên là sai, đừng dựa vào nó để suy ra dự án có test tích hợp.
+Cảnh báo về tên file: `integration.test.ts` **không** phải test tích hợp. Hai mươi trong
+số 24 test bên trong là khẳng định về hàm thuần; bốn test lái `requireStorage()` bằng
+một bộ dò tiêm vào, bốn test khác lái `detectCapabilities()` bằng bộ nhớ giả. Không có
+gì được ghép với trình duyệt, với worker hay với file thật. Cái tên là sai, đừng dựa
+vào nó để suy ra dự án có test tích hợp.
 
 ### Test phủ tới đâu
 
 Đây là phần khó chịu, và nó nằm đây thay vì bị giấu ở cuối trang.
 
-**15 trong 40 file của `src/` — 3.154 dòng — không một test nào chạm tới, kể cả gián
-tiếp**: `engine/manager.ts` (614), `ui/manager.ts` (544), `background/index.ts` (469),
-`content/media-detect.ts` (270), `engine/workers/fetch-worker.ts` (264), `ui/dom.ts`
-(227), `ui/popup.ts` (223), `shared/rpc.ts` (142), `engine/workers/writer-worker.ts` (82),
-`offscreen/offscreen.ts` (80), `platform/capabilities.ts` (78), `shared/protocol.ts` (69),
-`ui/format.ts` (38), `engine/host.ts` (33), `ui/welcome.ts` (21). Đúng là lớp keo:
-HostBridge, offscreen, hai worker, content script, và cả giao diện.
+**12 trong 41 file của `src/` — 2.820 dòng — không một test nào chạm tới, kể cả gián
+tiếp**: `engine/manager.ts` (614), `ui/manager.ts` (547), `background/index.ts` (472),
+`content/media-detect.ts` (270), `engine/workers/fetch-worker.ts` (264), `ui/popup.ts`
+(226), `shared/rpc.ts` (142), `engine/workers/writer-worker.ts` (82), `offscreen/offscreen.ts`
+(80), `shared/protocol.ts` (69), `engine/host.ts` (33), `ui/welcome.ts` (21). Đúng là lớp
+keo: HostBridge, offscreen, hai worker, content script, và ba file giao diện (manager,
+popup, welcome). Hai file giao diện còn lại không còn trong danh sách: `ui/format.ts`
+nay có test riêng (`format.test.ts`), `ui/dom.ts` được kéo vào qua `ui/a11y.ts`.
 
 Phạm vi ở đây lấy từ metafile của esbuild cho bundle test, nên một file được tính là "có
 chạm tới" kể cả khi không test nào import nó theo tên. Bản trước của mục này ghi *18 file,
@@ -343,11 +369,12 @@ chữ lại đọc ra thành "không test nào chạy đoạn code này", mà đ
 kéo vào gián tiếp và có thật sự chạy trong `npm test`. "Không được test riêng" và "không
 bao giờ chạy" là hai khẳng định khác nhau; danh sách trên là khẳng định thứ hai.
 
-`platform/capabilities.ts` là ca ngoại lệ một phần, và cần nói cho chính xác: bốn test
-trong `test/integration.test.ts` nay đã phủ `requireStorage()` — chốt chặn mà
-`DownloadJob.openWriter()` gọi trước khi dựng writer. Còn `detectCapabilities()`, nửa thật
-sự đi hỏi `navigator.storage`, thì chưa test nào chạy tới, và cũng chưa thể chạy tới chừng
-nào chưa có ai mở nó trong một trình duyệt.
+`platform/capabilities.ts` đã rời hẳn danh sách, và cần nói cho chính xác: bốn test
+trong `test/integration.test.ts` phủ `requireStorage()` — chốt chặn mà
+`DownloadJob.openWriter()` gọi trước khi dựng writer — và bốn test khác lái
+`detectCapabilities()` bằng bộ nhớ OPFS giả tiêm vào, kể cả phân biệt luồng chính với
+worker (đúng lỗi dò sai ngữ cảnh đã sửa). Chỉ còn lời gọi `navigator.storage` thật là
+chưa chạy ở đâu ngoài trình duyệt.
 
 **Hai lớp lớn nhất dự án nằm trong file "có test" nhưng bản thân chúng không được test:**
 
@@ -367,8 +394,8 @@ test **không phải** vì phụ thuộc trình duyệt. Đó là nợ, không p
 
 Thêm hai điều về phạm vi:
 
-- Cả hai `tsconfig` chỉ `include` `src/**`, nên **5.467 dòng trong `test/` cộng 163 dòng
-  `bench/bench.ts` — tổng 5.630 dòng — chưa bao giờ được typecheck** — `esbuild` chỉ xóa kiểu chứ không kiểm
+- Cả hai `tsconfig` chỉ `include` `src/**`, nên **5.966 dòng trong `test/` cộng 163 dòng
+  `bench/bench.ts` — tổng 6.129 dòng — chưa bao giờ được typecheck** — `esbuild` chỉ xóa kiểu chứ không kiểm
   kiểu. Phần `src/` thì bật `strict` và `noUncheckedIndexedAccess`.
 - Luật `declarativeNetRequest` được **dựng** đúng theo test đơn vị (`buildRuleSpec`,
   `RuleIdAllocator`), nhưng việc **cài** luật vào trình duyệt
@@ -600,7 +627,7 @@ logic, bơm cổng giả vào là test được, và chúng đang là khoảng t
 | | |
 |---|---|
 | TypeScript trong `src/` | 13.393 dòng, 40 file |
-| Test | 5.467 dòng, 8 file, 420 ca, chạy bằng `node:test`, không phụ thuộc framework nào |
+| Test | 5.966 dòng, 10 file, 420 ca, chạy bằng `node:test`, không phụ thuộc framework nào |
 | Phụ thuộc lúc chạy | không có |
 | Phụ thuộc lúc build | esbuild, typescript, `@types/chrome` |
 | Bản địa hóa | 141 khóa, tiếng Việt và tiếng Anh; mỗi khóa tiếng Việt đều có description cho người dịch, có test bắt buộc |
@@ -613,6 +640,9 @@ logic, bơm cổng giả vào là test được, và chúng đang là khoảng t
 - [CONTRIBUTING.md](CONTRIBUTING.md) — cách build, cách test, và chỗ đang cần giúp nhất
 - [SECURITY.md](SECURITY.md) — báo cáo lỗ hổng
 - [PRIVACY.md](PRIVACY.md) — extension thu thập gì và không thu thập gì
+- [docs/ROADMAP.md](docs/ROADMAP.md) — danh sách tính năng chờ làm
+- [docs/DESIGN.md](docs/DESIGN.md) — hệ thống thiết kế
+- [docs/SUPERPLAN.md](docs/SUPERPLAN.md) — kế hoạch đưa lên production
 - [README.md](README.md) — English version
 
 ## Giấy phép

@@ -4,7 +4,7 @@
 
 Down Faster is a personal project. Version 0.1.0 has never been listed on any store, and
 the extension has never been loaded into a real browser — not on Chromium, not on Firefox,
-not once. Correctness so far rests on 397 unit tests, a clean typecheck, and code review.
+not once. Correctness so far rests on 420 unit tests, a clean typecheck, and code review.
 Read the rest of this file with that in mind.
 
 Only the current default branch is supported. There are no released versions to backport
@@ -194,10 +194,11 @@ Listing these is more useful than hiding them:
   `test/integration.test.ts` cover it, including that the probe runs once per session
   instead of creating and removing a probe file on every download. This is not an exotic
   case: OPFS is absent in the private-browsing mode of some browsers.
-  `detectCapabilities()` itself — the half that actually touches `navigator.storage` — is
-  still untested.
+  `detectCapabilities()` itself is now driven by four tests with an injected fake
+  storage, including the main-thread vs worker split; only the real `navigator.storage`
+  call is still untested.
 
-- **15 of the 40 files in `src/` — 3,154 lines — are not touched by any test, even
+- **12 of the 41 files in `src/` — 2,820 lines — are not touched by any test, even
   indirectly.** Beyond those, `DownloadJob` (`src/engine/orchestrator.ts:153-967`) and
   `HlsJob` (`src/engine/hls/index.ts:518-1091`) are reached only through the modules
   around them and have no direct tests of their own. The pieces they coordinate are well
