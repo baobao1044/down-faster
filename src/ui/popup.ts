@@ -13,6 +13,7 @@ import { applyI18n, t } from '../shared/i18n';
 import { byId, el, on, setHidden, setText } from './dom';
 import { announce, initA11y, ProgressAnnouncer } from './a11y';
 import { bytes, eta, speed } from './format';
+import { mountAds } from './ads';
 
 const autoEl = byId<HTMLInputElement>('auto');
 const autoHintEl = byId('autoHint');
@@ -223,4 +224,6 @@ void (async () => {
   const res = await call({ type: 'engine:list' });
   render(res?.ok ? (res.tasks ?? []) : []);
   await loadMedia();
+  // Ô quảng cáo ở đáy popup — ads là phụ, không chặn UI tải.
+  void mountAds('adSlot');
 })();

@@ -421,5 +421,14 @@
   },
   "a11y_settings_saved": {
     "message": "Settings saved"
+  },
+  "ad_label": {
+    "message": "Ad"
+  },
+  "ad_sponsored_by": {
+    "message": "Sponsored by {name}"
+  },
+  "ad_house_text": {
+    "message": "Down Faster is free and open. Star it on GitHub to support development."
   }
 }

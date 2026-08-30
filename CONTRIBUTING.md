@@ -44,7 +44,7 @@ These claims were re-run while writing this document, and you can re-run them yo
 
 | Claim | How to check |
 |---|---|
-| 420 tests pass, 0 fail, 0 skip, in about a second | `npm test` |
+| 438 tests pass, 0 fail, 0 skip, in about a second | `npm test` |
 | Type checking is clean on both tsconfigs | `npm run typecheck` |
 | Both targets build | `npm run build` |
 | 141 i18n keys in `vi` and `en`; all 141 `vi` keys have a `description` | `npm test` |
@@ -180,7 +180,7 @@ src/
   ui/                     popup, manager page, welcome page, a11y, formatting
   content/media-detect.ts Content script that spots media URLs in a page
 
-test/                     10 files, 420 tests, node:test
+test/                     11 files, 438 tests, node:test
 bench/bench.ts            Throughput benchmark, imports the real engine functions
 scripts/                  build.mjs, test.mjs, bench.mjs, testserver.mjs,
                           verify.mjs, make-icons.mjs
@@ -479,7 +479,7 @@ around 90 characters.
 
 ## Where the tests are not
 
-420 passing tests do not mean a working download, and the project would rather say so
+438 passing tests do not mean a working download, and the project would rather say so
 than let you find out the hard way.
 
 **12 of the 41 files in `src/` — 2,820 lines — are not touched by any test at all, not
@@ -684,6 +684,6 @@ Current known limitations, all of which *are* open to contributions:
 
 ## License
 
-MIT. By contributing you agree that your contribution is licensed under the same terms.
+PolyForm Noncommercial 1.0.0. By contributing you agree that your contribution is licensed under the same terms.
 
 Maintainer: BaoBG (<baobg104@gmail.com>).

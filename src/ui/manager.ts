@@ -15,6 +15,7 @@ import { applyI18n, t } from '../shared/i18n';
 import { byId, el, on, setClass, setHidden, setText } from './dom';
 import { initA11y, installRovingList, ProgressAnnouncer, announce } from './a11y';
 import { stateLabel, bytes, eta, speed } from './format';
+import { mountAds } from './ads';
 
 const listEl = byId('list');
 const urlEl = byId<HTMLTextAreaElement>('url');
@@ -544,4 +545,6 @@ void (async () => {
 
   const res = await call({ type: 'engine:list' });
   render(res?.ok ? (res.tasks ?? []) : []);
+  // Ô quảng cáo ở đáy trang — ads là phụ, không chặn UI tải.
+  void mountAds('adSlot');
 })();

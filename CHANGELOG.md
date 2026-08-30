@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-08-30
+
+### Added
+- **Ad card in popup and manager.** A small ad slot appears at the bottom of the popup and
+  the manager page. In this release it shows a house ad (static GitHub link, no network
+  request). The code is architecture-ready for a network ad provider (EthicalAds), disabled
+  by default — it fetches creative as JSON with `credentials: 'omit'` and renders with
+  `textContent` only (MV3-safe, no script injection).
+- 18 tests for the ad module (`test/ads.test.ts`): creative normalization, provider
+  selection, house fallback, and network fetch behavior.
+
+### Changed
+- **License changed from MIT to PolyForm Noncommercial 1.0.0** for releases ≥ 0.3.0. Free
+  for personal and noncommercial use; commercial use or redistribution requires the
+  Licensor's permission. Releases ≤ 0.2.0 remain MIT.
+- Privacy policy updated to disclose the ad card and the (disabled) network ad path.
+
 ## [0.2.0] — 2026-08-29
 
 ### Fixed
@@ -45,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 420 unit/integration tests, local test server, benchmark suite.
 - Bilingual README (English + Vietnamese), ARCHITECTURE, PRIVACY, SECURITY, CONTRIBUTING docs.
 
-[Unreleased]: https://github.com/baobao1044/down-faster/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/baobao1044/down-faster/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/baobao1044/down-faster/releases/tag/v0.3.0
 [0.2.0]: https://github.com/baobao1044/down-faster/releases/tag/v0.2.0
 [0.1.0]: https://github.com/baobao1044/down-faster/releases/tag/v0.1.0

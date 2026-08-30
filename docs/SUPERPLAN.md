@@ -39,7 +39,7 @@ Mục tiêu: đưa repo từ hiện trạng (fix chưa merge, 2 lỗi thật ch�
 **Cửa chặn:** ROADMAP liên kết từ README, mọi issue có mô tả 1 đoạn + definition-of-done.
 
 ### WP5 — Trang trí repo
-1. Badges: license (MIT), version, `PRs welcome`; CI badge giữ nguyên; căn hàng cho cả 2 README.
+1. Badges: license (PolyForm Noncommercial), version, `PRs welcome`; CI badge giữ nguyên; căn hàng cho cả 2 README.
 2. Ảnh: `docs/assets/demo.gif` (quay thật từ Chromium: popup → thêm URL → 8 kết nối → xong → lượt qua manager) bằng khung chụp từ harness + ffmpeg, nén <1.5 MiB; `docs/assets/og-cover.png` 1200×630 (logo + gradient + tên); link từ cả 2 README.
 3. Governance: `CHANGELOG.md` (Keep a Changelog; 0.1.0 + 0.2.0); `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1); template PR (`.github/PULL_REQUEST_TEMPLATE.md`); `dependabot.yml` (npm + github-actions, monthly, ≤10 PR/tuần).
 4. GitHub settings qua `gh`: topics (browser-extension, download-manager, download-accelerator, manifest-v3, chromium, firefox-addon, opfs, hls, typescript); label `browser-test`; đóng template issue trùng nếu có.

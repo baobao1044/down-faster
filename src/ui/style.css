@@ -270,6 +270,44 @@ select {
   border: 0;
 }
 
+/* Ô quảng cáo — card dùng chung token với .task, không phá visual language. */
+.ad-slot {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 10px;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ad-slot[hidden] { display: none; }
+.ad-disclosure {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ad-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-decoration: none;
+  color: var(--text);
+}
+.ad-content:hover .ad-text { text-decoration: underline; }
+.ad-content:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+.ad-image { max-width: 100%; height: auto; border-radius: 6px; }
+.ad-text { color: var(--text); font-size: 13px; line-height: 1.4; }
+.ad-sponsor {
+  color: var(--muted);
+  font-size: 11px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }

@@ -145,21 +145,21 @@ at `src/engine/adaptive/streaming.ts:151`. (`streaming.ts` takes its `fetch` as 
 injectable dependency so the tests can substitute one, which is also why a bare `fetch(`
 grep alone would miss three of its call sites — grep for `fetchImpl(` too, as above.)
 
-That leaves **eleven** places that issue a request. Ten of them take a URL that came from
-you — the file you asked for, a mirror URL you entered, an HLS playlist, or a segment
+That leaves **twelve** places that issue a request. Eleven of them take a URL that came
+from you — the file you asked for, a mirror URL you entered, an HLS playlist, or a segment
 listed inside that playlist:
 
-- `src/engine/probe.ts:58` and `:92` — the one-byte range probe that discovers file size,
-  and its `HEAD` fallback
+- `src/engine/probe.ts:63`, `:123`, and `:155` — the one-byte range probe that discovers file
+  size, its `HEAD` fallback, and its plain-GET fallback for transport-compressed responses
 - `src/engine/workers/fetch-worker.ts:97` — the byte-range requests that are the download
 - `src/engine/orchestrator.ts:365` — reads a byte range from a candidate mirror to check
   it is genuinely the same file before trusting it
 - `src/engine/adaptive/streaming.ts:445`, `:626`, `:674` — the single-stream path for
   servers that do not report a size, its size probe, and its resume check
-- `src/engine/hls/index.ts:152` and `:830` — playlist and segment
+- `src/engine/hls/index.ts:152` and `:834` — playlist and segment
 - `src/engine/hls/keys.ts:207` — the AES-128 key URI, which comes from the playlist
 
-The eleventh is the only exception, and it never leaves your machine:
+The twelfth is the only exception, and it never leaves your machine:
 
 ```js
 // src/shared/i18n.ts:299 and :303
@@ -172,6 +172,11 @@ That is a `chrome-extension://` URL pointing at a translation file inside the ex
 own package. The locale string is validated against `/^[a-z]{2}(_[A-Z]{2})?$/`
 (`src/shared/i18n.ts:271`) before it is used, so it cannot be steered elsewhere.
 
+> **Note on the ad network fetch:** `src/ui/ads.ts` can issue a `fetch` to a configured ad
+> endpoint, but it calls through a local variable (`const f = fetchImpl ?? fetch`) so it
+> does not appear in the grep above. It is **disabled by default** — see the
+> [Ad networks](#ad-networks) section. When disabled, no request is made.
+
 **3. The strongest check — grep the built output, not the source:**
 
 ```bash
@@ -179,9 +184,11 @@ npm run build
 grep -ohE 'https?://[a-zA-Z0-9._~:/?#@!$&*+,;=%-]+' dist/chromium/*.js dist/firefox/*.js | sort -u
 ```
 
-Zero results. Every URL the extension ever contacts arrives at runtime from you. There
-is not a single hardcoded remote address in either bundle, which is a stronger statement
-than any promise in a privacy policy.
+One result: `https://github.com/baobao1044/down-faster`. That is the house-ad
+link (see the [Ad networks](#ad-networks) section) — a static link to the project's
+own GitHub page, used as a plain `<a href>` when the ad card renders. It is not a
+network endpoint; no request is made to it. Every other URL the extension ever
+contacts arrives at runtime from you.
 
 **4. The dependency surface:**
 
@@ -417,7 +424,7 @@ This is where the honest boundary sits, and it matters more than anything above.
 **The extension has never been run in a browser.** No Chrome, no Firefox, not once. The
 development machine has no browser installed. Everything in this document is a claim
 about source code and build output — both of which you can inspect and verify — not
-about observed behaviour. The 420 automated tests (`npm test`) run under `node:test` and
+about observed behaviour. The 438 automated tests (`npm test`) run under `node:test` and
 cover pure logic; they cannot exercise OPFS, Web Workers, the offscreen document,
 `chrome.alarms`, `chrome.downloads`, or declarativeNetRequest, because none of those
 exist outside a browser.
@@ -456,6 +463,34 @@ be wrong is worse than no privacy document.
 
 ---
 
+## Ad networks
+
+The popup and the manager page show a small ad card. The disclosure here is required by
+the Chrome Web Store ad policy.
+
+**This release (0.3.0) — house ad only, no network.** The card shows static content
+pointing at the project's own GitHub page. The only hardcoded URL in the bundle is
+`https://github.com/baobao1044/down-faster`, used as a plain `<a href>`. **No network
+request is made** to display it — the creative is embedded in the code. Clicking it opens
+the GitHub page in a new tab.
+
+**Network ad provider — disabled by default.** The code is architecture-ready to fetch
+ad creative (text, image, link) from a configured endpoint via `fetch` with
+`credentials: 'omit'` — no cookies, no tracking identifiers are sent to the ad endpoint.
+The default config (`DEFAULT_ADS_CONFIG` in `src/ui/ads.ts`) has `networkEnabled: false`
+and no endpoint set. If a future release enables it, the ad endpoint domain will be
+disclosed in this section *before* that release ships.
+
+**What the ad code does not do:**
+
+- No `<script>` injection — the creative is fetched as JSON and rendered with
+  `textContent` only (CSP `script-src 'self'` forbids remote scripts anyway).
+- No `innerHTML` — the DOM helper (`src/ui/dom.ts`) never writes raw HTML.
+- No cookie, no fingerprint, no identifier sent to any ad endpoint.
+- No ad network SDK is bundled.
+
+---
+
 ## Changes to this document
 
 This file is versioned in the repository. Its history is the changelog — `git log
@@ -465,5 +500,5 @@ file should be the same commit.
 
 ---
 
-Down Faster is MIT licensed. Author: BaoBG (<baobg104@gmail.com>),
+Down Faster is PolyForm Noncommercial licensed. Author: BaoBG (<baobg104@gmail.com>),
 <https://github.com/baobao1044/down-faster>.

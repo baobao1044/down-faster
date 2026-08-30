@@ -562,5 +562,17 @@
   "a11y_settings_saved": {
     "message": "Đã lưu cài đặt",
     "description": "Câu đọc cho trình đọc màn hình sau khi lưu một cài đặt."
+  },
+  "ad_label": {
+    "message": "Quảng cáo",
+    "description": "Nhãn công bố trên ô quảng cáo."
+  },
+  "ad_sponsored_by": {
+    "message": "Tài trợ bởi {name}",
+    "description": "Dòng ghi nguồn nhà tài trợ; {name} là tên nhà tài trợ."
+  },
+  "ad_house_text": {
+    "message": "Down Faster miễn phí. Star trên GitHub để ủng hộ dự án.",
+    "description": "Nội dung quảng cáo nội bộ (house ad) trỏ tới repo."
   }
 }
