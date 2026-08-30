@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] — 2026-08-30
+
+### Changed
+- **Default connection ceiling raised from 8 to 64.** The adaptive concurrency
+  controller (AIMD) self-tunes the actual connection count within this ceiling:
+  climbs when the server keeps up, backs off hard on 429/503/timeout. The old
+  ceiling of 8 was below what many servers can handle; 64 gives the controller
+  more room to climb on fast networks. The settings UI input now allows 1–64
+  (was 1–16). Existing user settings are preserved.
+
 ## [0.3.0] — 2026-08-30
 
 ### Added
@@ -62,7 +72,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 420 unit/integration tests, local test server, benchmark suite.
 - Bilingual README (English + Vietnamese), ARCHITECTURE, PRIVACY, SECURITY, CONTRIBUTING docs.
 
-[Unreleased]: https://github.com/baobao1044/down-faster/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/baobao1044/down-faster/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/baobao1044/down-faster/releases/tag/v0.3.1
 [0.3.0]: https://github.com/baobao1044/down-faster/releases/tag/v0.3.0
 [0.2.0]: https://github.com/baobao1044/down-faster/releases/tag/v0.2.0
 [0.1.0]: https://github.com/baobao1044/down-faster/releases/tag/v0.1.0
