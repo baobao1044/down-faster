@@ -49,7 +49,7 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   autoMode: true,
-  connections: 8,
+  connections: 64,
   minInterceptSize: 5 * 1024 * 1024,
   maxRetries: 5,
 

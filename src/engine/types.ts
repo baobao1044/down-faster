@@ -62,7 +62,7 @@ export interface DownloadOptions {
 }
 
 export const DEFAULT_OPTIONS: DownloadOptions = {
-  connections: 8,
+  connections: 64,
   maxRetries: 5,
   writeHighWaterMark: 8 * 1024 * 1024,
   minAccelerateSize: 5 * 1024 * 1024,

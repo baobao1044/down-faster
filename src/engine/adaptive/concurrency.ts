@@ -1,12 +1,12 @@
 /**
  * Tự dò số kết nối tối ưu thay vì tin vào một con số cố định.
  *
- * Con số 8 kết nối là phỏng đoán, và phỏng đoán ấy sai theo cả hai chiều: có
- * server chịu được 16 luồng, có server trả 429 ngay ở luồng thứ tư. Module này
- * mượn ý tưởng AIMD của TCP — nhích lên từng bước khi còn nhanh hơn, lùi mạnh
- * khi chạm tường — nhưng thêm hai thứ mà TCP không cần: bộ nhớ về mức đã gây
- * lỗi (`ceiling`) để khỏi đâm lại đúng bức tường đó sau vài chục giây, và khái
- * niệm "cửa sổ không kết luận được" để đừng hiểu nhầm lúc cuối file.
+ * Con số 64 kết nối là trần mặc định, nhưng con số thật tối ưu thay đổi theo từng
+ * server: có server chịu được 32 luồng, có server trả 429 ngay ở luồng thứ
+ * tư. Module này mượn ý tưởng AIMD của TCP — nhích lên từng bước khi còn nhanh
+ * hơn, lùi mạnh khi chạm tường — nhưng thêm hai thứ mà TCP không cần: bộ nhớ về
+ * mức đã gây lỗi (`ceiling`) để khỏi đâm lại đúng bức tường đó sau vài chục giây,
+ * và khái niệm "cửa sổ không kết luận được" để đừng hiểu nhầm lúc cuối file.
  *
  * Ở đây không có fetch, không có worker, không có đồng hồ thật: mọi thứ vào
  * bằng tham số và ra bằng quyết định, nên test được mà không cần mạng.
@@ -43,7 +43,7 @@ export interface ConcurrencyOptions {
 
 export const DEFAULT_CONCURRENCY: ConcurrencyOptions = {
   min: 1,
-  max: 8,
+  max: 64,
   start: 2,
   windowMs: 2000,
   settleWindows: 1,

@@ -970,13 +970,14 @@ export class DownloadJob implements Job {
  * Cấu hình bộ dò số kết nối cho một lượt tải.
  *
  * Mở thẳng ở trần người dùng đặt, KHÔNG khởi đầu khiêm tốn rồi leo dần. Bộ dò
- * nhích một bậc mỗi hai cửa sổ, tức khoảng 4 giây, nên đi từ 2 lên 8 mất chừng
- * 24 giây — dài hơn hẳn phần lớn lượt tải. Đo bằng `npm run bench`: khởi đầu ở 2
- * làm file 4 MB chậm đi 93% và file 32 MB chậm đi 210% so với mở thẳng 8. Người
+ * nhích một bậc mỗi hai cửa sổ, tức khoảng 4 giây, nên đi từ 2 lên trần mất
+ * thời gian tỷ lệ thuận với trần — dài hơn hẳn phần lớn lượt tải. Đo bằng
+ * `npm run bench`: khởi đầu khiêm tốn làm chậm đi rõ so với mở thẳng. Người
  * dùng đã nói rõ trần họ muốn; leo dần tới đó là phớt lờ họ suốt nửa phút đầu.
  *
  * Chiều GIẢM mới là chiều đáng giữ: 429, 503 hay Retry-After vẫn kéo số kết nối
- * xuống ngay lập tức, và `relaxCeiling` nới lại dần sau đó.
+ * xuống ngay lập tức, và `relaxCeiling` nới lại dần sau đó. Trần mặc định 64
+ * cho bộ dò nhiều chỗ leo khi mạng tốt; bộ dò tự lùi khi server khó tính.
  *
  * Hàm thuần và xuất ra để bộ đo dùng đúng cấu hình này — chép lại nó ở chỗ khác
  * là cách chắc chắn để số đo nói về một thuật toán không ai chạy.

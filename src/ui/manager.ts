@@ -463,7 +463,7 @@ function renderSettings(): void {
     field({
       titleKey: 'settings_connections',
       hintKey: 'settings_connections_hint',
-      control: numberInput(settings.connections, 1, 16, 'settings_connections', (n) =>
+      control: numberInput(settings.connections, 1, 64, 'settings_connections', (n) =>
         void patch({ connections: n }),
       ),
     }),
