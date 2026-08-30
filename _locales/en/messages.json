@@ -430,5 +430,8 @@
   },
   "ad_house_text": {
     "message": "Down Faster is free and open. Star it on GitHub to support development."
+  },
+  "donate_hint": {
+    "message": "Down Faster is free. If it helps, consider supporting:"
   }
 }

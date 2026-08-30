@@ -184,17 +184,24 @@ npm run build
 grep -ohE 'https?://[a-zA-Z0-9._~:/?#@!$&*+,;=%-]+' dist/chromium/*.js dist/firefox/*.js | sort -u
 ```
 
-One result: `https://github.com/baobao1044/down-faster`. That is the house-ad
-link (see the [Ad networks](#ad-networks) section) — a static link to the project's
-own GitHub page, used as a plain `<a href>` when the ad card renders. It is not a
-network endpoint; no request is made to it. Every other URL the extension ever
-contacts arrives at runtime from you.
+Three results:
+
+- `https://github.com/baobao1044/down-faster` — the house-ad link (see the
+  [Ad networks](#ad-networks) section): a static link to the project's own GitHub page,
+  used as a plain `<a href>` when the ad card renders. No request is made to it.
+- `https://ko-fi.com/F8U8260QJ8` and `https://ko-fi.com/img/githubbutton_sm.svg` — the
+  Ko-fi support button (see the [Support link](#support-link-ko-fi) section). The button
+  image is loaded from `ko-fi.com`; clicking opens the Ko-fi page. No data is sent.
+
+Every other URL the extension ever contacts arrives at runtime from you.
 
 **4. The dependency surface:**
 
-`package.json` lists three devDependencies (`esbuild`, `typescript`, `@types/chrome`)
-and **no runtime dependencies at all**. Nothing is bundled that I did not write, so
-there is no third-party SDK that could be phoning home behind my back.
+`package.json` lists five devDependencies (`@types/chrome`, `@types/node`, `esbuild`,
+`playwright-core`, `typescript`) and **no runtime dependencies at all**. Nothing is
+bundled that I did not write, so there is no third-party SDK that could be phoning
+home behind my back. (`@types/*` are TypeScript types only — never in the bundle.
+`playwright-core` is a dev dependency for the E2E harness, never in the bundle.)
 
 ### One thing that does write output: the console
 
@@ -488,6 +495,20 @@ disclosed in this section *before* that release ships.
 - No `innerHTML` — the DOM helper (`src/ui/dom.ts`) never writes raw HTML.
 - No cookie, no fingerprint, no identifier sent to any ad endpoint.
 - No ad network SDK is bundled.
+
+---
+
+## Support link (Ko-fi)
+
+The welcome page and the settings tab show a Ko-fi "Buy me a coffee" button pointing at
+`https://ko-fi.com/F8U8260QJ8`. Clicking it opens the Ko-fi page in a new tab
+(`target="_blank"`, `rel="noopener noreferrer"`).
+
+- The button image (`ko-fi.com/img/githubbutton_sm.svg`) is loaded from `ko-fi.com`.
+- The extension sends **no data** to Ko-fi — no cookies (the image is a plain `<img>`,
+  not a tracking pixel), no user information, no download history.
+- Ko-fi is a third-party service. If you click the button, Ko-fi's own privacy policy
+  applies on their site. The extension itself does not embed Ko-fi's tracking.
 
 ---
 

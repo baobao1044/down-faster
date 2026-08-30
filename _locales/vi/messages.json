@@ -574,5 +574,9 @@
   "ad_house_text": {
     "message": "Down Faster miễn phí. Star trên GitHub để ủng hộ dự án.",
     "description": "Nội dung quảng cáo nội bộ (house ad) trỏ tới repo."
+  },
+  "donate_hint": {
+    "message": "Down Faster miễn phí. Nếu thấy hữu ích, hãy ủng hộ:",
+    "description": "Dòng mời ủng hộ qua Ko-fi, hiện ở welcome và settings."
   }
 }

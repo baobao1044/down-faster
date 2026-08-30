@@ -525,6 +525,20 @@ function renderSettings(): void {
   );
 
   if (settings.scheduleEnabled) settingsEl.append(scheduleEditor());
+
+  // Dòng donate cuối settings — không phải cài đặt, chỉ link hỗ trợ.
+  settingsEl.append(
+    el('div', { class: 'donate-row settings-donate', children: [
+      el('span', { class: 'hint', i18n: 'donate_hint' }),
+      el('a', {
+        class: 'donate-link',
+        attrs: { href: 'https://ko-fi.com/F8U8260QJ8', target: '_blank', rel: 'noopener noreferrer' },
+        children: [
+          el('img', { attrs: { src: 'https://ko-fi.com/img/githubbutton_sm.svg', alt: 'Ko-fi', loading: 'lazy' } }),
+        ],
+      }),
+    ]}),
+  );
 }
 
 /* ---------- Khởi động ---------- */
