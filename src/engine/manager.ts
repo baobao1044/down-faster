@@ -7,6 +7,16 @@ import {
   type ThrottlePort,
 } from './orchestrator';
 import { HlsJob, classifyMediaUrl, probeMedia } from './hls';
+import { probe } from './probe';
+import type { ProbeResult } from './types';
+import {
+  classifyGrabUrl,
+  dedupUrls,
+  GRAB_CONCURRENCY,
+  makeFileItem,
+  makeMediaItem,
+  makeErrorItem,
+} from './grab';
 import type { HostBridge } from './host';
 import type { DownloadTask, Progress, TaskSource } from './types';
 import * as storage from './storage';
@@ -15,6 +25,7 @@ import type {
   EngineBroadcast,
   EngineRequest,
   EngineResponse,
+  GrabbedItem,
   TaskKind,
   TaskSnapshot,
 } from '../shared/rpc';
@@ -205,6 +216,42 @@ export class DownloadManager {
 
   probeMedia(url: string): ReturnType<typeof probeMedia> {
     return probeMedia(url);
+  }
+
+  /* ---------- Link Grabber: dò hàng loạt ---------- */
+
+  /**
+   * Dò nhiều URL cùng lúc, trả metadata để người dùng chọn tải cái nào.
+   * Concurrency giới hạn 4 để khỏi bắn 64 probe cùng lúc (server sẽ 429).
+   */
+  async grab(urls: string[]): Promise<GrabbedItem[]> {
+    const unique = dedupUrls(urls);
+    const results: GrabbedItem[] = [];
+
+    for (let i = 0; i < unique.length; i += GRAB_CONCURRENCY) {
+      const batch = unique.slice(i, i + GRAB_CONCURRENCY);
+      const settled = await Promise.allSettled(batch.map((url) => this.probeOne(url)));
+      for (let j = 0; j < settled.length; j++) {
+        const s = settled[j]!;
+        results.push(s.status === 'fulfilled' ? s.value : makeErrorItem(batch[j]!, String(s.reason)));
+      }
+    }
+    return results;
+  }
+
+  /** Dò một URL: phân loại, gọi probe hoặc probeMedia phù hợp, dựng GrabbedItem. */
+  private async probeOne(url: string): Promise<GrabbedItem> {
+    const kind = classifyGrabUrl(url);
+    if (kind === 'unsupported') return makeErrorItem(url, 'DASH chưa được hỗ trợ');
+
+    if (kind === 'media') {
+      const probe = await this.probeMedia(url);
+      return makeMediaItem(url, probe);
+    }
+
+    // File thường: probe Range.
+    const result = await probe(url);
+    return makeFileItem(url, result);
   }
 
   private register(job: Job, kind: TaskKind, priority: Priority): string {
@@ -585,6 +632,12 @@ export function dispatchEngineRequest(
     case 'engine:list':
       respond({ ok: true, tasks: manager.list() });
       return false;
+    case 'engine:grab':
+      void manager
+        .grab(req.urls)
+        .then((grab) => respond({ ok: true, grab }))
+        .catch((err: unknown) => respond({ ok: false, error: String(err) }));
+      return true; // Async: giữ kênh mở cho lời đáp.
     default:
       return false;
   }

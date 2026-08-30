@@ -1,6 +1,6 @@
 {
   "name": "down-faster",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "description": "Tr\u00ecnh t\u0103ng t\u1ed1c t\u1ea3i \u0111a lu\u1ed3ng d\u1ea1ng extension cho Chromium v\u00e0 Firefox",

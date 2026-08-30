@@ -578,5 +578,57 @@
   "donate_hint": {
     "message": "Down Faster miễn phí. Nếu thấy hữu ích, hãy ủng hộ:",
     "description": "Dòng mời ủng hộ qua Ko-fi, hiện ở welcome và settings."
+  },
+  "manager_tab_grab": {
+    "message": "Dò link",
+    "description": "Tên tab Link Grabber."
+  },
+  "grab_placeholder": {
+    "message": "Dán link vào đây, mỗi dòng một link...",
+    "description": "Placeholder cho ô nhập link của Link Grabber."
+  },
+  "grab_action": {
+    "message": "Dò link",
+    "description": "Nút bắt đầu dò hàng loạt link."
+  },
+  "grab_download": {
+    "message": "Tải đã chọn",
+    "description": "Nút tải các link đã đánh dấu trong kết quả grab."
+  },
+  "grab_select_all": {
+    "message": "Chọn tất cả",
+    "description": "Checkbox chọn tất cả link tải được."
+  },
+  "grab_kind_file": {
+    "message": "Tệp",
+    "description": "Nhãn loại nội dung: file thường."
+  },
+  "grab_kind_media": {
+    "message": "Video",
+    "description": "Nhãn loại nội dung: HLS/streaming."
+  },
+  "grab_kind_unsupported": {
+    "message": "Không hỗ trợ",
+    "description": "Nhãn loại nội dung: không dò được hoặc DASH."
+  },
+  "grab_summary": {
+    "message": "{ok}/{total} có thể tải",
+    "description": "Tổng kết số link tải được; {ok} và {total} là số."
+  },
+  "grab_nothing": {
+    "message": "Không có link nào",
+    "description": "Hiện khi dò không ra link hợp lệ."
+  },
+  "grab_probing": {
+    "message": "Đang dò link...",
+    "description": "Thông báo đang dò, hiện trong lúc chờ engine:grab."
+  },
+  "quality_title": {
+    "message": "Chọn chất lượng",
+    "description": "Tiêu đề dialog chọn chất lượng HLS."
+  },
+  "quality_cancel": {
+    "message": "Hủy",
+    "description": "Nút hủy dialog chọn chất lượng."
   }
 }

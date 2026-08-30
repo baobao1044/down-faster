@@ -9,11 +9,11 @@ và Firefox, Manifest V3, chung một code base, không cần binary ngoài, kh�
 
 <img src="docs/assets/og-cover.png" alt="Down Faster" width="100%">
 
-`giấy phép: PolyForm Noncommercial` · `trạng thái: alpha — đường lõi đã chạy trong Chromium thật` · `438 test xanh`
+`giấy phép: PolyForm Noncommercial` · `trạng thái: alpha — đường lõi đã chạy trong Chromium thật` · `457 test xanh`
 
 *Huy hiệu này có thật, và nó hẹp. Ngay ở commit đầu tiên, GitHub Actions đã chạy bộ test
 trên một lần `npm ci` sạch với cả Node 20 lẫn Node 22, cả hai nhánh đều xanh — nên con số
-438 không còn chỉ là lời của tác giả nữa. Nhưng thứ huy hiệu KHÔNG bao gồm lại đúng là
+457 không còn chỉ là lời của tác giả nữa. Nhưng thứ huy hiệu KHÔNG bao gồm lại đúng là
 thứ quan trọng nhất: Actions chạy Linux không màn hình, không có browser nào. Nó kiểm đúng phần logic thuần và không chạm được vào một đường phụ thuộc
 trình duyệt nào. Dấu tick xanh ở đây nghĩa là code biên dịch được và test đơn vị qua.
 Nó KHÔNG phải bằng chứng rằng extension chạy được.*
@@ -227,7 +227,7 @@ npm run build:dev          # cùng hai target, nhưng giữ log [df:…] và sou
 npm run build:chromium     # hoặc chỉ một target
 npm run build:firefox
 npm run watch              # build lại khi sửa file; ngầm bật --dev
-npm test                   # 438 test
+npm test                   # 457 test
 npm run typecheck          # tsconfig.json và tsconfig.worker.json
 npm run testserver         # http://localhost:8787
 npm run bench              # cần testserver chạy trước ở cửa sổ khác
@@ -314,11 +314,11 @@ vòng lặp tự giành lại chính lượt tải nó vừa buông ra (có test
 ### Test tự động
 
 ```bash
-npm test         # 438 test, chạy trong khoảng một giây
+npm test         # 457 test, chạy trong khoảng một giây
 npm run typecheck
 ```
 
-438 test, 0 fail, 0 skip, 0 todo. Phân rã theo file:
+457 test, 0 fail, 0 skip, 0 todo. Phân rã theo file:
 
 | File | Số test | Phủ cái gì |
 |---|---|---|
@@ -333,6 +333,7 @@ npm run typecheck
 | `test/format.test.ts` | 10 | định dạng UI — bytes, tốc độ, ETA, nhãn trạng thái |
 | `test/messaging.test.ts` | 3 | race khởi động engine-channel: xếp hàng lệnh khi listener offscreen chưa sẵn sàng |
 | `test/ads.test.ts` | 18 | chuẩn hoá creative quảng cáo, chọn nguồn, house fallback, fetch network |
+| `test/grab.test.ts` | 19 | Link Grabber: phân loại URL, bỏ trùng, dựng item file/media/lỗi |
 
 Vài chỗ đáng nói vì chúng khóa lại đúng loại lỗi khó thấy:
 
@@ -628,7 +629,7 @@ logic, bơm cổng giả vào là test được, và chúng đang là khoảng t
 | | |
 |---|---|
 | TypeScript trong `src/` | 13.393 dòng, 40 file |
-| Test | 5.966 dòng, 11 file, 438 ca, chạy bằng `node:test`, không phụ thuộc framework nào |
+| Test | 5.966 dòng, 12 file, 457 ca, chạy bằng `node:test`, không phụ thuộc framework nào |
 | Phụ thuộc lúc chạy | không có |
 | Phụ thuộc lúc build | esbuild, typescript, `@types/chrome` |
 | Bản địa hóa | 141 khóa, tiếng Việt và tiếng Anh; mỗi khóa tiếng Việt đều có description cho người dịch, có test bắt buộc |

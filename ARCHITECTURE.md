@@ -11,7 +11,7 @@ been proven yet.
 
 **Status, stated up front, because it changes how you should read everything below.**
 The code has never run inside a real browser. Not once. There is no browser on the
-development machine. 438 unit tests pass, both TypeScript projects typecheck clean, and
+development machine. 457 unit tests pass, both TypeScript projects typecheck clean, and
 both targets build — but every path that touches OPFS, `Worker`, the offscreen document,
 `chrome.alarms`, `declarativeNetRequest`, `chrome.downloads`, or the content script is
 correct on paper and in unit tests only. Section 12 maps exactly what is covered and what
@@ -584,7 +584,7 @@ is a design intent read off the code, not a behaviour a test holds in place.
 
 ## 12. What the tests actually prove
 
-438 tests, `node:test`, in about a second. Reproduce with `npm test`.
+457 tests, `node:test`, in about a second. Reproduce with `npm test`.
 
 | File | Tests | Covers |
 |------|-------|--------|
@@ -826,7 +826,7 @@ src/
   shared/                  protocol (worker msgs), rpc (host msgs), settings, i18n, log
 manifest/                  base.json + chromium.json + firefox.json overlays
 scripts/                   build, test, bench, testserver, verify, make-icons
-test/                      11 files, 438 tests
+test/                      12 files, 457 tests
 bench/bench.ts             Uses the real planner and controller
 _locales/{vi,en}/          141 keys each; all 141 Vietnamese keys carry a description
 ```
@@ -841,7 +841,7 @@ npm run build:dev          # the same two targets, keeping [df:...] logging and 
 npm run build:chromium
 npm run build:firefox
 npm run watch              # implies --dev
-npm test                   # 438 tests
+npm test                   # 457 tests
 npm run typecheck          # both tsconfigs
 npm run testserver         # http://localhost:8787
 npm run bench              # needs testserver running in another terminal
@@ -857,7 +857,7 @@ condition multi-connection downloading is designed for. `/stats` returns
 
 ## 16. If you want to contribute
 
-The most valuable work is not new features. It is closing the gap between "passes 438 unit
+The most valuable work is not new features. It is closing the gap between "passes 457 unit
 tests" and "known to work".
 
 Ranked by how much they would improve confidence:
@@ -883,7 +883,7 @@ Conventions that are load-bearing rather than stylistic:
 - **Comments explain why, not what.** Most non-obvious lines in this codebase carry a note
   about the failure they prevent. Keep that up; those notes are the actual documentation.
 - **Pure logic stays pure.** Injected clocks, injected ports, no direct browser API calls
-  outside `background/` and `platform/`. This is why 438 tests can run in under a second
+  outside `background/` and `platform/`. This is why 457 tests can run in under a second
   with no network.
 - **`src/engine/persistence.ts` must never import `platform/api`.** It would work on Firefox
   and fail silently on Chromium.

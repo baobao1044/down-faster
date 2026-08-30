@@ -1,11 +1,24 @@
 import type { DownloadTask, TaskSource } from '../engine/types';
 import type { Priority, QueueEntryState } from '../engine/queue';
-import type { MediaProbe } from '../engine/hls';
+import type { MediaProbe, VariantSummary } from '../engine/hls';
 import type { HeaderRuleSpec } from '../engine/adaptive/headers';
 import type { Settings } from './settings';
 
 /** Loại việc: file thường tải theo khoảng byte, hay luồng media ghép từ segment. */
 export type TaskKind = 'file' | 'media';
+
+/** Một mục do Link Grabber dò ra: một URL, loại nội dung, và metadata để chọn tải. */
+export interface GrabbedItem {
+  url: string;
+  filename: string;
+  /** null khi không biết (HLS, streaming, không Content-Length). */
+  size: number | null;
+  kind: 'file' | 'media' | 'unsupported';
+  /** Lý do không hỗ trợ, hiện khi kind = 'unsupported'. */
+  error?: string;
+  /** Chỉ cho kind = 'media': các biến thể chất lượng (HLS master playlist). */
+  variants?: VariantSummary[];
+}
 
 /** Lệnh gửi tới engine host (offscreen trên Chromium, background trên Firefox). */
 export type EngineRequest =
@@ -47,10 +60,12 @@ export type EngineRequest =
   /** Cửa lịch mở hay đóng; do background tính rồi báo xuống. */
   | { type: 'engine:gate'; open: boolean }
   | { type: 'engine:list' }
+  /** Dò hàng loạt: trả metadata cho từng URL để người dùng chọn tải cái nào. */
+  | { type: 'engine:grab'; urls: string[] }
   | { type: 'engine:ping' };
 
 export type EngineResponse =
-  | { ok: true; tasks?: TaskSnapshot[]; id?: string; probe?: MediaProbe }
+  | { ok: true; tasks?: TaskSnapshot[]; id?: string; probe?: MediaProbe; grab?: GrabbedItem[] }
   | { ok: false; error: string };
 
 /**

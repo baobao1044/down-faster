@@ -1,5 +1,5 @@
 import { api } from '../platform/api';
-import type { EngineBroadcast, EngineRequest, EngineResponse, TaskSnapshot } from '../shared/rpc';
+import type { EngineBroadcast, EngineRequest, EngineResponse, GrabbedItem, TaskSnapshot } from '../shared/rpc';
 import type { Priority } from '../engine/queue';
 import { loadSettings, saveSettings, type Settings } from '../shared/settings';
 import {
@@ -12,7 +12,7 @@ import {
 import type { RefererMode } from '../engine/adaptive/headers';
 import { createEngineChannel } from '../shared/engine-channel';
 import { applyI18n, t } from '../shared/i18n';
-import { byId, el, on, setClass, setHidden, setText } from './dom';
+import { byId, clear, el, on, setClass, setHidden, setText } from './dom';
 import { initA11y, installRovingList, ProgressAnnouncer, announce } from './a11y';
 import { stateLabel, bytes, eta, speed } from './format';
 import { mountAds } from './ads';
@@ -26,9 +26,16 @@ const autoHintEl = byId('autoHint');
 const settingsEl = byId('settings');
 
 const tabDownloads = byId<HTMLButtonElement>('tabDownloads');
+const tabGrab = byId<HTMLButtonElement>('tabGrab');
 const tabSettings = byId<HTMLButtonElement>('tabSettings');
 const paneDownloads = byId('paneDownloads');
+const paneGrab = byId('paneGrab');
 const paneSettings = byId('paneSettings');
+
+const grabUrlsEl = byId<HTMLTextAreaElement>('grabUrls');
+const grabBtnEl = byId<HTMLButtonElement>('grabBtn');
+const grabDownloadEl = byId<HTMLButtonElement>('grabDownload');
+const grabResultsEl = byId('grabResults');
 
 const announcer = new ProgressAnnouncer();
 const roving = installRovingList(listEl, { itemSelector: '.task', wrap: true });
@@ -48,15 +55,22 @@ function call(request: EngineRequest): Promise<EngineResponse | undefined> {
 
 /* ---------- Tab ---------- */
 
-function showTab(which: 'downloads' | 'settings'): void {
-  const downloads = which === 'downloads';
-  tabDownloads.setAttribute('aria-selected', String(downloads));
-  tabSettings.setAttribute('aria-selected', String(!downloads));
-  setHidden(paneDownloads, !downloads);
-  setHidden(paneSettings, downloads);
+type Tab = 'downloads' | 'grab' | 'settings';
+
+function showTab(which: Tab): void {
+  const dl = which === 'downloads';
+  const gr = which === 'grab';
+  const st = which === 'settings';
+  tabDownloads.setAttribute('aria-selected', String(dl));
+  tabGrab.setAttribute('aria-selected', String(gr));
+  tabSettings.setAttribute('aria-selected', String(st));
+  setHidden(paneDownloads, !dl);
+  setHidden(paneGrab, !gr);
+  setHidden(paneSettings, !st);
 }
 
 on(tabDownloads, 'click', () => showTab('downloads'));
+on(tabGrab, 'click', () => showTab('grab'));
 on(tabSettings, 'click', () => showTab('settings'));
 
 /* ---------- Công tắc tự động ---------- */
@@ -278,6 +292,147 @@ on(urlEl, 'keydown', (e) => {
   }
 });
 on(clearEl, 'click', () => void call({ type: 'engine:clear-finished' }));
+
+/* ---------- Link Grabber ---------- */
+
+let grabbedItems: GrabbedItem[] = [];
+
+async function runGrab(): Promise<void> {
+  const urls = grabUrlsEl.value
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => /^https?:\/\//i.test(line));
+  if (urls.length === 0) return;
+  grabBtnEl.disabled = true;
+  grabResultsEl.textContent = t('grab_probing', undefined, 'Đang dò...');
+  try {
+    const res = await call({ type: 'engine:grab', urls });
+    grabbedItems = res?.ok && res.grab ? res.grab : [];
+    renderGrabResults();
+  } catch {
+    grabResultsEl.textContent = '';
+  } finally {
+    grabBtnEl.disabled = false;
+  }
+}
+
+function renderGrabResults(): void {
+  clear(grabResultsEl);
+  if (grabbedItems.length === 0) {
+    grabResultsEl.append(el('p', { class: 'hint', i18n: 'grab_nothing' }));
+    grabDownloadEl.disabled = true;
+    return;
+  }
+  const downloadable = grabbedItems.filter((i) => i.kind !== 'unsupported');
+  grabDownloadEl.disabled = downloadable.length === 0;
+  // Dòng tổng quan
+  grabResultsEl.append(
+    el('div', { class: 'grab-summary', children: [
+      el('label', { class: 'grab-select-all', children: [
+        el('input', { attrs: { type: 'checkbox' }, on: { change: toggleAllGrab } }),
+        el('span', { i18n: 'grab_select_all' }),
+      ] }),
+      el('span', {
+        class: 'hint',
+        i18n: 'grab_summary',
+        i18nParams: { ok: String(downloadable.length), total: String(grabbedItems.length) },
+      }),
+    ] }),
+  );
+  for (const item of grabbedItems) {
+    grabResultsEl.append(createGrabRow(item));
+  }
+}
+
+function createGrabRow(item: GrabbedItem): HTMLElement {
+  const row = el('div', { class: ['grab-item', item.kind === 'unsupported' ? 'unsupported' : ''] });
+  const checkbox = el('input', {
+    attrs: { type: 'checkbox', disabled: item.kind === 'unsupported' ? '' : null },
+  });
+  const info = el('div', { class: 'grab-info', children: [
+    el('span', { class: 'grab-kind', i18n: kindKey(item.kind) }),
+    el('span', { class: 'grab-url', text: truncate(item.url, 70), attrs: { title: item.url } }),
+    el('span', { class: 'hint', children: [
+      item.filename || item.url,
+      ...(item.size != null ? [' · ', bytes(item.size)] : []),
+      ...(item.error ? [' · ', item.error] : []),
+    ] }),
+  ] });
+  row.append(checkbox, info);
+  return row;
+}
+
+function kindKey(kind: GrabbedItem['kind']): string {
+  if (kind === 'file') return 'grab_kind_file';
+  if (kind === 'media') return 'grab_kind_media';
+  return 'grab_kind_unsupported';
+}
+
+function truncate(s: string, n: number): string {
+  return s.length > n ? s.slice(0, n - 1) + '…' : s;
+}
+
+function toggleAllGrab(ev: Event): void {
+  const checked = (ev.target as HTMLInputElement).checked;
+  const checkboxes = grabResultsEl.querySelectorAll<HTMLInputElement>(
+    'input[type=checkbox]:not(:disabled)',
+  );
+  for (const cb of checkboxes) cb.checked = checked;
+}
+
+async function downloadSelected(): Promise<void> {
+  const rows = Array.from(grabResultsEl.querySelectorAll<HTMLElement>('.grab-item'));
+  for (let i = 0; i < rows.length; i++) {
+    const cb = rows[i]!.querySelector<HTMLInputElement>('input[type=checkbox]');
+    if (!cb || !cb.checked) continue;
+    const item = grabbedItems[i];
+    if (!item || item.kind === 'unsupported') continue;
+    if (item.kind === 'media') {
+      await qualityDialog(item.url, async (maxHeight) => {
+        await call({ type: 'engine:add-media', url: item.url, maxHeight });
+      });
+    } else {
+      await call({ type: 'engine:add', url: item.url, source: 'manual' });
+    }
+  }
+  showTab('downloads');
+  grabUrlsEl.value = '';
+  clear(grabResultsEl);
+  grabbedItems = [];
+  grabDownloadEl.disabled = true;
+}
+
+on(grabBtnEl, 'click', () => void runGrab());
+on(grabDownloadEl, 'click', () => void downloadSelected());
+
+/* ---------- Quality Picker dialog ---------- */
+
+async function qualityDialog(url: string, onPick: (maxHeight: number) => Promise<void>): Promise<void> {
+  const overlay = el('div', { class: 'quality-dialog' });
+  const card = el('div', { class: 'quality-card', children: [
+    el('h3', { i18n: 'quality_title' }),
+  ] });
+  overlay.append(card);
+  document.body.append(overlay);
+  try {
+    const res = await call({ type: 'engine:probe-media', url });
+    if (!res?.ok || !res.probe || res.probe.variants.length === 0) {
+      // Không có biến thể — tải thẳng.
+      await onPick(0);
+      return;
+    }
+    for (const v of res.probe.variants) {
+      const btn = el('button', { class: 'quality-variant', text: v.label });
+      on(btn, 'click', async () => { await onPick(v.height ?? 0); overlay.remove(); });
+      card.append(btn);
+    }
+    const cancel = el('button', { class: 'link', i18n: 'quality_cancel' });
+    on(cancel, 'click', () => overlay.remove());
+    card.append(cancel);
+  } catch {
+    overlay.remove();
+  }
+}
 
 /* ---------- Bảng cài đặt ---------- */
 

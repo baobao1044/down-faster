@@ -433,5 +433,44 @@
   },
   "donate_hint": {
     "message": "Down Faster is free. If it helps, consider supporting:"
+  },
+  "manager_tab_grab": {
+    "message": "Grab"
+  },
+  "grab_placeholder": {
+    "message": "Paste links here, one per line..."
+  },
+  "grab_action": {
+    "message": "Probe links"
+  },
+  "grab_download": {
+    "message": "Download selected"
+  },
+  "grab_select_all": {
+    "message": "Select all"
+  },
+  "grab_kind_file": {
+    "message": "File"
+  },
+  "grab_kind_media": {
+    "message": "Video"
+  },
+  "grab_kind_unsupported": {
+    "message": "Unsupported"
+  },
+  "grab_summary": {
+    "message": "{ok} of {total} downloadable"
+  },
+  "grab_nothing": {
+    "message": "No links found"
+  },
+  "grab_probing": {
+    "message": "Probing links..."
+  },
+  "quality_title": {
+    "message": "Choose quality"
+  },
+  "quality_cancel": {
+    "message": "Cancel"
   }
 }

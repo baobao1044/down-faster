@@ -4,7 +4,7 @@
 
 Down Faster is a personal project. Version 0.1.0 has never been listed on any store, and
 the extension has never been loaded into a real browser — not on Chromium, not on Firefox,
-not once. Correctness so far rests on 438 unit tests, a clean typecheck, and code review.
+not once. Correctness so far rests on 457 unit tests, a clean typecheck, and code review.
 Read the rest of this file with that in mind.
 
 Only the current default branch is supported. There are no released versions to backport

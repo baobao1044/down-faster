@@ -8,10 +8,10 @@ no companion app.
 
 <img src="docs/assets/og-cover.png" alt="Down Faster" width="100%">
 
-`license: PolyForm Noncommercial` · `status: alpha — core path verified in a real browser` · `438 tests passing`
+`license: PolyForm Noncommercial` · `status: alpha — core path verified in a real browser` · `457 tests passing`
 
 *The badge is real and it is narrow. On the first commit GitHub Actions ran the suite on
-a clean `npm ci` under both Node 20 and Node 22, and both legs went green, so "438 tests
+a clean `npm ci` under both Node 20 and Node 22, and both legs went green, so "457 tests
 passing" is no longer only the author's word. What the badge does **not** cover is the
 part that matters most: Actions runs headless Linux with no browser, so it exercises the same pure logic and leaves every
 browser-dependent path untouched. A green tick here means the code compiles and the unit
@@ -278,6 +278,7 @@ does not — and again, **none of it has run in a browser.**
 | `test/format.test.ts` | 10 | UI formatters — bytes, speed, ETA, state labels |
 | `test/messaging.test.ts` | 3 | engine-channel startup race: queue while the offscreen listener is pending |
 | `test/ads.test.ts` | 18 | ad creative normalization, provider selection, house fallback, network fetch |
+| `test/grab.test.ts` | 19 | Link Grabber: URL classification, dedup, file/media/error items |
 
 ### Implemented, no tests at all
 
@@ -325,7 +326,7 @@ npm run build:dev      # the same two bundles, with [df:…] logging left in
 npm run build:chromium
 npm run build:firefox
 npm run watch          # rebuild on change; implies --dev
-npm test               # 438 tests, in about a second
+npm test               # 457 tests, in about a second
 npm run typecheck      # tsconfig.json and tsconfig.worker.json
 npm run clean
 ```
@@ -554,7 +555,7 @@ it. PRIVACY.md goes through it permission by permission.
 | | |
 |---|---|
 | TypeScript in `src/` | 13,393 lines across 40 files |
-| Tests | 5,966 lines, 11 files, 438 cases, `node:test`, no test framework dependency |
+| Tests | 5,966 lines, 12 files, 457 cases, `node:test`, no test framework dependency |
 | Runtime dependencies | none |
 | Build dependencies | esbuild, typescript, `@types/chrome` |
 | Localisation | 141 keys, Vietnamese and English, every Vietnamese key carries a translator description (enforced by a test) |

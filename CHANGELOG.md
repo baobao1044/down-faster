@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-08-30
+
+### Added
+- **Link Grabber** — new "Grab" tab in the manager page. Paste multiple links, the engine
+  probes each one (file size, accept-ranges, HLS detection), and presents a selectable
+  list. Choose which to download; HLS items open a quality picker first. Dedup by URL
+  (case-insensitive, fragment-stripped), concurrency-limited to 4 probes to avoid 429s.
+- **Quality Picker dialog** — when downloading HLS from grab results or the popup media
+  list, a dialog shows all available variants (resolution + bandwidth) from the master
+  playlist. The user picks quality before download starts. Uses the existing
+  `engine:probe-media` RPC.
+- 19 tests for grab logic (`test/grab.test.ts`): URL classification, dedup, file/media
+  item construction, error items.
+
+### Changed
+- `engine:grab` RPC added to `EngineRequest` union — batch probe with dedup +
+  concurrency limiting.
+
 ## [0.3.1] — 2026-08-30
 
 ### Changed
@@ -72,7 +90,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 420 unit/integration tests, local test server, benchmark suite.
 - Bilingual README (English + Vietnamese), ARCHITECTURE, PRIVACY, SECURITY, CONTRIBUTING docs.
 
-[Unreleased]: https://github.com/baobao1044/down-faster/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/baobao1044/down-faster/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/baobao1044/down-faster/releases/tag/v0.4.0
 [0.3.1]: https://github.com/baobao1044/down-faster/releases/tag/v0.3.1
 [0.3.0]: https://github.com/baobao1044/down-faster/releases/tag/v0.3.0
 [0.2.0]: https://github.com/baobao1044/down-faster/releases/tag/v0.2.0

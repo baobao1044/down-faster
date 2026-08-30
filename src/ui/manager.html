@@ -13,6 +13,8 @@
     <div class="tabs" role="tablist">
       <button role="tab" id="tabDownloads" aria-controls="paneDownloads" aria-selected="true"
               data-i18n="manager_tab_downloads">Lượt tải</button>
+      <button role="tab" id="tabGrab" aria-controls="paneGrab" aria-selected="false"
+              data-i18n="manager_tab_grab">Dò link</button>
       <button role="tab" id="tabSettings" aria-controls="paneSettings" aria-selected="false"
               data-i18n="manager_tab_settings">Cài đặt</button>
     </div>
@@ -44,6 +46,17 @@
 
       <div id="list" role="list" data-i18n-aria-label="a11y_list_label"></div>
       <p class="hint" data-i18n="a11y_list_hint"></p>
+    </section>
+
+    <section id="paneGrab" role="tabpanel" aria-labelledby="tabGrab" hidden>
+      <textarea id="grabUrls" rows="6" spellcheck="false"
+                data-i18n-placeholder="grab_placeholder"
+                data-i18n-aria-label="grab_placeholder"></textarea>
+      <div class="row">
+        <button class="primary" id="grabBtn" data-i18n="grab_action">Dò link</button>
+        <button class="link" id="grabDownload" disabled data-i18n="grab_download">Tải đã chọn</button>
+      </div>
+      <div id="grabResults"></div>
     </section>
 
     <section id="paneSettings" role="tabpanel" aria-labelledby="tabSettings" hidden>

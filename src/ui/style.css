@@ -327,6 +327,109 @@ select {
   border-radius: 4px;
 }
 
+/* Link Grabber — tab Dò link. */
+#grabUrls {
+  width: 100%;
+  min-height: 120px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font: 13px/1.4 ui-monospace, monospace;
+  resize: vertical;
+}
+#grabUrls:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+}
+.grab-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0 8px;
+}
+.grab-select-all {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+#grabResults {
+  margin-top: 8px;
+  max-height: 340px;
+  overflow-y: auto;
+}
+.grab-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.grab-item.unsupported { opacity: 0.45; }
+.grab-item.unsupported input[type=checkbox] { visibility: hidden; }
+.grab-item input[type=checkbox] { margin-top: 2px; }
+.grab-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.grab-kind {
+  display: inline-block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  width: fit-content;
+}
+.grab-url {
+  font-size: 13px;
+  word-break: break-all;
+  color: var(--text);
+}
+.grab-results .hint { color: var(--muted); font-size: 12px; }
+
+/* Quality Picker dialog — overlay đơn giản. */
+.quality-dialog {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.quality-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  max-width: 400px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+.quality-card h3 { margin: 0 0 4px; font-size: 15px; }
+.quality-variant {
+  text-align: left;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 13px;
+}
+.quality-variant:hover { border-color: var(--accent); }
+.quality-variant:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }

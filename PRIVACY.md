@@ -431,7 +431,7 @@ This is where the honest boundary sits, and it matters more than anything above.
 **The extension has never been run in a browser.** No Chrome, no Firefox, not once. The
 development machine has no browser installed. Everything in this document is a claim
 about source code and build output — both of which you can inspect and verify — not
-about observed behaviour. The 438 automated tests (`npm test`) run under `node:test` and
+about observed behaviour. The 457 automated tests (`npm test`) run under `node:test` and
 cover pure logic; they cannot exercise OPFS, Web Workers, the offscreen document,
 `chrome.alarms`, `chrome.downloads`, or declarativeNetRequest, because none of those
 exist outside a browser.
